@@ -1,13 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-# class User(AbstractUser):
-#     name = models.CharField(max_length=255)
-#     email = models.EmailField(unique=True)
-#     password = models.CharField(max_length=255)
-
-#     def __str__(self):
-#         return self.nombre
+from django.contrib.auth.models import User
 
 class Table(models.Model):
     chairs = models.IntegerField()
@@ -33,7 +25,7 @@ class Menu(models.Model):
 
 class Reservacion(models.Model):
     id_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tables = models.ManyToManyField(Table, through='ReservationTable')
+    tables = models.ManyToManyField(Table)
     start_date = models.DateField()
     end_date = models.DateField()
     id_state = models.ForeignKey(ReservationState, on_delete=models.CASCADE)
