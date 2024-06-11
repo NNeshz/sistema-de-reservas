@@ -1,0 +1,7 @@
+# Entorno de desarrollo
+.env
+.env.local
+.env.*.local
+
+backend/backend/__pycache__
+backend/restaurant/__pycache__
