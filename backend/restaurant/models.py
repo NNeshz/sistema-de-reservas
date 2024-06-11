@@ -23,28 +23,21 @@ class Menu(models.Model):
     def __str__(self):
         return self.name
 
-class Reservacion(models.Model):
-    id_user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Reservation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     tables = models.ManyToManyField(Table)
     start_date = models.DateField()
     end_date = models.DateField()
-    id_state = models.ForeignKey(ReservationState, on_delete=models.CASCADE)
+    state = models.ForeignKey(ReservationState, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Reservación {self.id} - Usuario: {self.id_user.name}"
+        return f"Reservación {self.id} - Usuario: {self.user.username}"
 
 class ReservationMenu(models.Model):
-    id_reservation = models.ForeignKey(Reservacion, on_delete=models.CASCADE)
-    id_menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     amount = models.IntegerField()
 
     def __str__(self):
-        return f"Reservación {self.id_reservation.id} - Menú: {self.id_menu.name}"
-
-class ReservacionMesa(models.Model):
-    id_reservation = models.ForeignKey(Reservacion, on_delete=models.CASCADE)
-    id_table = models.ForeignKey(Table, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Reservación {self.id_reservation.id} - Mesa {self.id_table.id}"
+        return f"Reservación {self.reservation.id} - Menú: {self.menu.name}"
