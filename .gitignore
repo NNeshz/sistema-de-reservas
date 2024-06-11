@@ -1,0 +1,4 @@
+# Entorno de desarrollo
+.env
+.env.local
+.env.*.local
