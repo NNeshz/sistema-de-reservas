@@ -1,16 +1,33 @@
 from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User
 
-class UserSerializer (ModelSerializer):
+class CreateUserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
-        extra_kwargs = {'password': {'write_only':True}}
-        
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-        
+        fields = ['id', 'username', 'password', 'email', 'is_staff']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'is_staff': {'required': False}
+        }
 
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+    
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'is_staff', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'is_staff': {'required': False}
+        }
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+        return super().update(instance, validated_data)
+    
 class TableSerializer(ModelSerializer):
     class Meta:
         model = Table
