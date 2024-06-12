@@ -58,9 +58,12 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     
 class ReservationViewSet(viewsets.ModelViewSet):
-    queryset = Reservation.objects.all()
+    
     serializer_class = ReservationSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Reservation.objects.filter(user=self.request.user)
     
 class ReservationMenuViewSet(viewsets.ModelViewSet):
     queryset = ReservationMenu.objects.all()
