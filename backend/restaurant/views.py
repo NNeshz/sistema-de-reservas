@@ -10,6 +10,14 @@ class StaffOnlyView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsStaff]
 
+class UserDetailView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer
@@ -21,12 +29,19 @@ class CreateUserView(generics.CreateAPIView):
             serializer.save()
         else:
             serializer.save(is_staff=False)
-
-class UserViewSet(viewsets.ModelViewSet):
+        
+class UpdateUserView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]  # Permitir acceso solo a usuarios autenticados
-    
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        if self.request.user.is_authenticated and self.request.user.is_staff:
+            serializer.save()
+        else:
+            # No permitir que usuarios normales actualicen usuarios del staff
+            serializer.save(is_staff=False)
+
 class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
