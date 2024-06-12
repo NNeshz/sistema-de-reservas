@@ -1,15 +1,10 @@
 from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User
 
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'is_staff']
-
 class CreateUserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'is_staff']
+        fields = ['id', 'username', 'password', 'email', 'is_staff']
         extra_kwargs = {
             'password': {'write_only': True},
             'is_staff': {'required': False}

@@ -5,6 +5,13 @@ from .serializers import CreateUserSerializer, UserSerializer, MenuSerializer, T
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User
 from .permissions import IsStaff
 
+class DeleteUserView(generics.DestroyAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user    
+
 class StaffOnlyView(generics.ListAPIView):
     queryset = User.objects.filter(is_staff=True)
     serializer_class = UserSerializer
@@ -31,17 +38,19 @@ class CreateUserView(generics.CreateAPIView):
             serializer.save(is_staff=False)
         
 class UpdateUserView(generics.UpdateAPIView):
-    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-
+    
+    def get_object(self):
+        return self.request.user   
+    
     def perform_update(self, serializer):
         if self.request.user.is_authenticated and self.request.user.is_staff:
             serializer.save()
         else:
             # No permitir que usuarios normales actualicen usuarios del staff
             serializer.save(is_staff=False)
-
+            
 class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
