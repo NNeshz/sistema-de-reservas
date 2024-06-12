@@ -21,7 +21,7 @@ const Sidebar = () => {
       <div>
         <div className="mb-12">
           <Link href="/" className="font-bold text-xl flex gap-2 items-center hover:cursor-pointer">
-            <Apple className="w-6 h-6" /> FastFood
+            <Apple className="w-6 h-6" /> <p className="text-yellow-500">FastFood</p>
           </Link>
         </div>
         <nav className="flex flex-col gap-y-4">
@@ -29,13 +29,13 @@ const Sidebar = () => {
             href="/menu"
             className="text-lg flex gap-2 items-center hover:cursor-pointer"
           >
-            <MenuIcon className="w-5 h-5" /> Menú
+            <MenuIcon className="w-5 h-5 text-yellow-500" /> Menú
           </Link>
           <Link
             href="/promociones"
             className="text-lg flex gap-2 items-center hover:cursor-pointer"
           >
-            <Percent className="w-5 h-5" /> Promociones
+            <Percent className="w-5 h-5 text-yellow-500" /> Promociones
           </Link>
         </nav>
       </div>
@@ -44,7 +44,7 @@ const Sidebar = () => {
         <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center border w-full py-2 pl-2 gap-2 rounded-md justify-center">
-            <User className="w-5 h-5" />
+            <User className="w-5 h-5 text-yellow-500" />
             User
           </DropdownMenuTrigger>
           <DropdownMenuContent>
