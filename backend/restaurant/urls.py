@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserDetailView, CreateUserView, DeleteUserView, UpdateUserView, StaffOnlyView, TableViewSet, ReservationStateViewSet, MenuViewSet, ReservationViewSet, ReservationMenuViewSet
+from .views import ProcessInviteView, UserDetailView, CreateUserView, DeleteUserView, UpdateUserView, StaffOnlyView, TableViewSet, ReservationStateViewSet, MenuViewSet, ReservationViewSet, ReservationMenuViewSet
 # from rest_framework_nested.routers import NestedDefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -23,6 +23,7 @@ urlpatterns = [
     path('user/detail/', UserDetailView.as_view(), name='user-detail'), 
     path('user/login/', TokenObtainPairView.as_view(), name='user-token'),    
     path('user/token/refresh/', TokenRefreshView.as_view(), name='user-token-refresh'),
+    path('invite/<uuid:token>/', ProcessInviteView.as_view(), name='process-invite'),
 ]
 """
 from django.urls import path, include

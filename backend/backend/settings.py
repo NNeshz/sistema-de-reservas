@@ -147,3 +147,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+from .env import EMAIL_HOST_PASSWORD, EMAIL_HOST_USER, DEFAULT_FROM_EMAIL
+
+SITE_URL = 'http://localhost:8000'  # Cambia esto a la URL de tu sitio en producción
+
+# Configuración de correo
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL
