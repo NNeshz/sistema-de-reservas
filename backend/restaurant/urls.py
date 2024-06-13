@@ -41,7 +41,7 @@ urlpatterns = [
     path('user/logout/', LogoutView.as_view(), name='user-logout'),  # Hay que enviarle el refresh token 
       
     path('user/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),  
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token-verify'),
+    path('user/token/verify/', TokenVerifyView.as_view(), name='token-verify'),
     
     path('invite/<uuid:token>/', ProcessInviteView.as_view(), name='process-invite'),
     
