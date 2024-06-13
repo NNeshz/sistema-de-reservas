@@ -27,7 +27,7 @@ router.register(r'reservation-menus', ReservationMenuViewSet, basename='reservat
 # projects_router.register(r'tasks', TaskViewSet, basename='project-tasks')
 
 # from .utils import send_staff_invitation
-from .views import email_form, send_email #Pruebas de envío de correos 
+# from .views import email_form, send_email #Pruebas de envío de correos 
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -45,8 +45,8 @@ urlpatterns = [
     
     path('invite/<uuid:token>/', ProcessInviteView.as_view(), name='process-invite'),
     
-    path('email-form/', email_form, name='email_form'),
-    path('send/', send_email, name='send'),
+    # path('email-form/', email_form, name='email_form'),
+    # path('send/', send_email, name='send'),
 ]
 """ LogOut -> EL usuario no puede volver a hacer refresh de su token pero no debería expirar su token de acceso de manera simultanea?
 
