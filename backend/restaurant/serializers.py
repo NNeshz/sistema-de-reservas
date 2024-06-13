@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
+from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField, SerializerMethodField
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User
 
 class CreateUserSerializer(ModelSerializer):
@@ -44,13 +44,18 @@ class MenuSerializer(ModelSerializer):
         fields = ['id', 'name', 'description', 'price']
 
 class ReservationSerializer(ModelSerializer):
-    user   = PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = PrimaryKeyRelatedField(queryset=User.objects.all())
     tables = PrimaryKeyRelatedField(queryset=Table.objects.all(), many=True)
-    state  = PrimaryKeyRelatedField(queryset=ReservationState.objects.all())
+    state = PrimaryKeyRelatedField(queryset=ReservationState.objects.all())
+    menus = SerializerMethodField()
 
     class Meta:
         model = Reservation
-        fields = ['id', 'user', 'tables', 'start_date', 'end_date', 'state', 'created_at']
+        fields = ['id', 'user', 'tables', 'start_date', 'end_date', 'state', 'created_at', 'menus']
+
+    def get_menus(self, obj):
+        reservation_menus = ReservationMenu.objects.filter(reservation=obj)
+        return MenuSerializer(reservation_menus, many=True).data
 
     def create(self, validated_data):
         tables_data = validated_data.pop('tables')
@@ -59,9 +64,6 @@ class ReservationSerializer(ModelSerializer):
         return reservation
     
 class ReservationMenuSerializer(ModelSerializer):
-    # reservation = ReservationSerializer()
-    # menu = MenuSerializer()
-
     class Meta:
         model = ReservationMenu
         fields = ['id', 'reservation', 'menu', 'amount']
