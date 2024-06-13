@@ -2,8 +2,18 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .serializers import CreateUserSerializer, UserSerializer, MenuSerializer, TableSerializer, ReservationMenuSerializer, ReservationSerializer, ReservationStateSerializer
+from rest_framework.views import APIView
+from .serializers import (
+    CreateUserSerializer, 
+    UserSerializer, 
+    MenuSerializer, 
+    TableSerializer, 
+    ReservationMenuSerializer, 
+    ReservationSerializer, 
+    ReservationStateSerializer
+)
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User, InviteToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from .permissions import IsStaff
 
 class ProcessInviteView(generics.GenericAPIView):
@@ -25,17 +35,24 @@ class ProcessInviteView(generics.GenericAPIView):
         except InviteToken.DoesNotExist:
             return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
 
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 class DeleteUserView(generics.DestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     
     def get_object(self):
         return self.request.user    
-
-class StaffOnlyView(generics.ListAPIView):
-    queryset = User.objects.filter(is_staff=True)
-    serializer_class = UserSerializer
-    permission_classes = [IsStaff]
 
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -70,6 +87,11 @@ class UpdateUserView(generics.UpdateAPIView):
         else:
             # No permitir que usuarios normales actualicen usuarios del staff
             serializer.save(is_staff=False)
+   
+class StaffOnlyView(generics.ListAPIView):
+    queryset = User.objects.filter(is_staff=True)
+    serializer_class = UserSerializer
+    permission_classes = [IsStaff]  
             
 class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.all()
