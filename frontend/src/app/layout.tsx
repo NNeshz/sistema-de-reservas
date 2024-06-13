@@ -6,6 +6,7 @@ import "./globals.css";
 // import { ThemeProvider } from "@/components/theme-provider";
 import Sidebar from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
+import DotPattern from "@/components/magicui/DotPattern";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,10 +24,19 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body className={cn("antialiased min-h-screen flex", inter.className)}>
-          
-            <Sidebar />
-            {children}
+        <body className={cn("antialiased min-h-screen p-2", inter.className)}>
+          <Sidebar />
+          {children}
+          <DotPattern
+            width={20}
+            height={20}
+            cx={1}
+            cy={1}
+            cr={1}
+            className={cn(
+              "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)] "
+            )}
+          />
         </body>
       </html>
     </>
