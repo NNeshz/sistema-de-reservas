@@ -25,6 +25,7 @@ class Menu(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     price = models.FloatField()
+    available = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -36,6 +37,11 @@ class Reservation(models.Model):
     end_date = models.DateField()
     state = models.ForeignKey(ReservationState, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        if self.end_date < self.start_date:
+            raise ValueError ('The end date must be after the start date.')
+
 
     def __str__(self):
         return f"Reservación {self.id} - Usuario: {self.user.username}"

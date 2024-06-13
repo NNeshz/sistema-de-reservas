@@ -1,0 +1,14 @@
+<!-- templates/email_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enviar correo</title>
+</head>
+<body>
+    <form method="post" action="{% url 'send' %}">
+        {% csrf_token %}
+        <button type="submit">Enviar correo</button>
+    </form>
+</body>
+</html>
