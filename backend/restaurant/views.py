@@ -22,21 +22,21 @@ def email_form(request):
     return render(request, 'email_form.html')
 
 #Envío de Email de prueba. -> Funciona
-from django.conf import settings
-from django.core.mail import send_mail
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
-@csrf_exempt
-def send_email(request):
-    user_email = 'user@example.com'  # Reemplaza esto con la lógica para obtener el correo del usuario.
-    send_mail(
-        'Hola',
-        '¿Cómo estás?',
-        settings.DEFAULT_FROM_EMAIL,
-        [user_email],
-        fail_silently=False,
-    )
-    return HttpResponse('Correo enviado.')
+# from django.conf import settings
+# from django.core.mail import send_mail
+# from django.views.decorators.csrf import csrf_exempt
+# from django.http import HttpResponse
+# @csrf_exempt
+# def send_email(request):
+#     user_email = 'user@example.com'  # Reemplaza esto con la lógica para obtener el correo del usuario.
+#     send_mail(
+#         'Hola',
+#         '¿Cómo estás?',
+#         settings.DEFAULT_FROM_EMAIL,
+#         [user_email],
+#         fail_silently=False,
+#     )
+#     return HttpResponse('Correo enviado.')
 
 class ProcessInviteView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
