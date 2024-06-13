@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import { ThemeProvider } from "@/components/theme-provider";
+// ✅ TODO: Concluir si puede entrar el ThemeProvider
+// import { ThemeProvider } from "@/components/theme-provider";
 import Sidebar from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
 
@@ -23,15 +24,9 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <head />
         <body className={cn("antialiased min-h-screen flex", inter.className)}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          
             <Sidebar />
-            <main>{children}</main>
-          </ThemeProvider>
+            {children}
         </body>
       </html>
     </>
