@@ -1,19 +1,6 @@
 from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField, SerializerMethodField
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User
 
-class CreateUserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'password', 'email', 'is_staff']
-        extra_kwargs = {
-            'password': {'write_only': True},
-            'is_staff': {'required': False}
-        }
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
-    
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -22,7 +9,10 @@ class UserSerializer(ModelSerializer):
             'password': {'write_only': True},
             'is_staff': {'required': False}
         }
-
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+    
     def update(self, instance, validated_data):
         if 'password' in validated_data:
             instance.set_password(validated_data['password'])
@@ -41,7 +31,7 @@ class ReservationStateSerializer(ModelSerializer):
 class MenuSerializer(ModelSerializer):
     class Meta:
         model = Menu
-        fields = ['id', 'name', 'description', 'price']
+        fields = ['id', 'name', 'description', 'price', 'available']
 
 class ReservationSerializer(ModelSerializer):
     user = PrimaryKeyRelatedField(queryset=User.objects.all())

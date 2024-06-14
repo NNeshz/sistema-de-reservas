@@ -2,9 +2,9 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from django.http import HttpResponse  
 from rest_framework.views import APIView
 from .serializers import (
-    CreateUserSerializer, 
     UserSerializer, 
     MenuSerializer, 
     TableSerializer, 
@@ -12,91 +12,108 @@ from .serializers import (
     ReservationSerializer, 
     ReservationStateSerializer
 )
-from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User, InviteToken
+from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User #InviteToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from .permissions import IsStaff
 
-#Necesario para testear el envío de correos. Al hacer una peticion get se obtiene X-CSRFToken header necesario
-from django.shortcuts import render
-def email_form(request):
-    return render(request, 'email_form.html')
+from django.contrib.auth import authenticate, login, logout, user_logged_in
+#La creación de usuarios parte del Staff se manejará a través de invitaciones en la casilla de notificaciones del usuario deseado. 
+    #Esta función aún no está hecha
 
-#Envío de Email de prueba. -> Funciona
-# from django.conf import settings
-# from django.core.mail import send_mail
-# from django.views.decorators.csrf import csrf_exempt
-# from django.http import HttpResponse
-# @csrf_exempt
-# def send_email(request):
-#     user_email = 'user@example.com'  # Reemplaza esto con la lógica para obtener el correo del usuario.
-#     send_mail(
-#         'Hola',
-#         '¿Cómo estás?',
-#         settings.DEFAULT_FROM_EMAIL,
-#         [user_email],
-#         fail_silently=False,
-#     )
-#     return HttpResponse('Correo enviado.')
+class CreateUserView(generics.CreateAPIView): #Se crea el usuario correctamente -> retorna token en cookie
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    
+    def perform_create(self, serializer): #Guarda usuario
+        user = serializer.save()
+        user.is_staff = False
+        user.save()
 
-class ProcessInviteView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, token, *args, **kwargs):
-        try:
-            invite_token = InviteToken.objects.get(token=token)
-            user = request.user
-
-            if user != invite_token.user:
-                return Response({'error': 'Invalid token for this user'}, status=status.HTTP_400_BAD_REQUEST)
-
-            user.is_staff = True
-            user.save()
-            invite_token.delete()  # Eliminar el token después de su uso
-            return Response({'status': 'User promoted to staff'}, status=status.HTTP_200_OK)
+    def create(self, request, *args, **kwargs): #Genera un respueta sin datos y una cookie con el token del user
+        response = super().create(request, *args, **kwargs)
+        user = User.objects.get(username=request.data['username']) # Usa el usuario guardado
         
-        except InviteToken.DoesNotExist:
-            return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
-
-class LogoutView(APIView):
+        response = Response({"detail": "The user was created successfully"}, status=status.HTTP_201_CREATED) #Datos retornados
+        
+        response.set_cookie( #Cookie retornada
+            key='token',
+            value=str(RefreshToken.for_user(user).access_token),
+            httponly=True,  # Asegura que la cookie no sea accesible vía JavaScript
+            max_age=3600    # Tiempo en seg para que expire
+        )
+        
+        return response
+      
+class LogoutView(APIView): #Pendiente. El usuario puede 'deslogerse' de manera infinita. Ejectivamente elimina la cookie
     permission_classes = [IsAuthenticated]
+  
+    def post(self, request, *args, **kwargs):
+  
+        logout(request)
+        response = Response({"detail": "Logged out successfully"}, status=status.HTTP_200_OK)
+        
+        response.delete_cookie('token')  # Elimina la cookie del token
+    
+        return response
+    
+class UserProfileView(generics.RetrieveAPIView):#Retorna datos de user y Token en cookie 
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, *args, **kwargs):
+        # return request
+        user = request.user
+        serializer = self.get_serializer(user)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        try:
-            refresh_token = request.data["refresh_token"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # Configura la cookie en la respuesta con un tiempo de expiración de 1 hora
+        response.set_cookie(
+            key='token',
+            value=str(RefreshToken.for_user(user).access_token),
+            httponly=True,  # Asegura que la cookie no sea accesible vía JavaScript
+            max_age=3600    # Tiempo en segundos para que expire (1 hora)
+        )
 
-class DeleteUserView(generics.DestroyAPIView):
+        return response
+
+class LogginView(generics.GenericAPIView):#Retorna datos de user, Token en cookie y sessiónID 
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        if not (user is not None):
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        login(request, user)
+        
+        # Serializa los datos del usuario
+        serializer = self.get_serializer(user)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+
+        refresh = RefreshToken.for_user(user)
+        response.set_cookie(
+            key='token',
+            value=str(refresh.access_token),
+            httponly=True,  # Asegura que la cookie no sea accesible vía JavaScript
+            max_age=3600    # Tiempo en segundos para que expire (1 hora)
+        )
+
+        return response
+    
+class DeleteUserView(generics.DestroyAPIView):#Elimina correctamente al usuario
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     
     def get_object(self):
         return self.request.user    
 
-class UserDetailView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = CreateUserSerializer
-    permission_classes = [AllowAny]  # Permitir a cualquiera crear un usuario
-
-    def perform_create(self, serializer):
-        # Solo permitir a los usuarios autenticados y con permisos especiales crear usuarios del staff
-        if self.request.user.is_authenticated and self.request.user.is_staff:
-            serializer.save()
-        else:
-            serializer.save(is_staff=False)
-        
-class UpdateUserView(generics.UpdateAPIView):
+class UpdateUserView(generics.UpdateAPIView): #Actualiza los datos. No retorna token
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     
@@ -104,16 +121,30 @@ class UpdateUserView(generics.UpdateAPIView):
         return self.request.user   
     
     def perform_update(self, serializer):
-        if self.request.user.is_authenticated and self.request.user.is_staff:
-            serializer.save()
-        else:
-            # No permitir que usuarios normales actualicen usuarios del staff
+        if not self.request.user.is_staff:
             serializer.save(is_staff=False)
-   
+        else:
+            serializer.save()
+        
 class StaffOnlyView(generics.ListAPIView):
     queryset = User.objects.filter(is_staff=True)
     serializer_class = UserSerializer
     permission_classes = [IsStaff]  
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
             
 class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.all()
@@ -142,3 +173,56 @@ class ReservationMenuViewSet(viewsets.ModelViewSet):
     queryset = ReservationMenu.objects.all()
     serializer_class = ReservationMenuSerializer
     permission_classes = [AllowAny] # [IsAuthenticated]
+    
+    
+    
+    
+    
+    
+    
+    
+    
+# class ProcessInviteView(generics.GenericAPIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request, token, *args, **kwargs):
+#         try:
+#             invite_token = InviteToken.objects.get(token=token)
+#             user = request.user
+
+#             if user != invite_token.user:
+#                 return Response({'error': 'Invalid token for this user'}, status=status.HTTP_400_BAD_REQUEST)
+
+#             user.is_staff = True
+#             user.save()
+#             invite_token.delete()  # Eliminar el token después de su uso
+#             return Response({'status': 'User promoted to staff'}, status=status.HTTP_200_OK)
+        
+#         except InviteToken.DoesNotExist:
+#             return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
+# #Envío de Email de prueba. -> Funciona
+# from django.conf import settings
+# from django.core.mail import send_mail
+# from django.views.decorators.csrf import csrf_exempt
+# from django.http import HttpResponse
+# @csrf_exempt
+# def send_email(request):
+#     user_email = 'user@example.com'  # Reemplaza esto con la lógica para obtener el correo del usuario.
+#     send_mail(
+#         'Hola',
+#         '¿Cómo estás?',
+#         settings.DEFAULT_FROM_EMAIL,
+#         [user_email],
+#         fail_silently=False,
+#     )
+#     return HttpResponse('Correo enviado.')
+
+
+# #Necesario para testear el envío de correos. Al hacer una peticion get se obtiene X-CSRFToken header necesario
+# from django.shortcuts import render
+# def email_form(request):
+#     return render(request, 'email_form.html')
+
