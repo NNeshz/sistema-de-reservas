@@ -13,7 +13,7 @@ const BentoGrid = ({
   return (
     <div
       className={cn(
-        "grid w-full h-full grid-rows-3 grid-cols-3 gap-4",
+        "grid w-full h-screen grid-rows-3 grid-cols-3 gap-4",
         className
       )}
     >

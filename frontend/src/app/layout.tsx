@@ -5,6 +5,7 @@ import "./globals.css";
 // ✅ TODO: Concluir si puede entrar el ThemeProvider
 // import { ThemeProvider } from "@/components/theme-provider";
 import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/DotPattern";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <body className={cn("antialiased min-h-screen p-2", inter.className)}>
           <Sidebar />
           {children}
+          <Footer />
           <DotPattern
             width={20}
             height={20}
