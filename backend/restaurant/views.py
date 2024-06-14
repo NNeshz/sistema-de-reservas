@@ -16,7 +16,7 @@ from .models import Menu, Reservation, ReservationMenu, ReservationState, Table,
 from rest_framework_simplejwt.tokens import RefreshToken
 from .permissions import IsStaff
 
-from django.contrib.auth import authenticate, login, logout, user_logged_in
+from django.contrib.auth import authenticate, login, logout
 #La creación de usuarios parte del Staff se manejará a través de invitaciones en la casilla de notificaciones del usuario deseado. 
     #Esta función aún no está hecha
 
