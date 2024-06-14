@@ -8,6 +8,11 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import LogoOlla from "../../public/olla-caliente.png";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import {
+  GitHubLogoIcon,
+  InstagramLogoIcon,
+  TwitterLogoIcon,
+} from "@radix-ui/react-icons";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,15 +70,15 @@ const Sidebar = () => {
             <p>fastfood@email.com</p>
             <p>01 800 - 500 - 723</p>
             <div className="flex space-x-2 mt-4">
-              <a href="#">
-                <i className="fab fa-facebook"></i>
-              </a>
-              <a href="#">
-                <i className="fab fa-instagram"></i>
-              </a>
-              <a href="#">
-                <i className="fab fa-twitter"></i>
-              </a>
+              <Link href="#">
+                <InstagramLogoIcon className="w-6 h-6 text-black" />
+              </Link>
+              <Link href="#">
+                <TwitterLogoIcon className="w-6 h-6 text-black" />
+              </Link>
+              <Link href="#">
+                <GitHubLogoIcon className="w-6 h-6 text-black" />
+              </Link>
             </div>
           </div>
         </div>
