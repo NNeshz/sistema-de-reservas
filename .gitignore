@@ -2,8 +2,9 @@
 .env
 .env.local
 .env.*.local
-
+frontend/
 backend/backend/__pycache__
 backend/restaurant/__pycache__
+backend/restaurant/migrations
 backend/backend/env.py
 backend/restaurant/__pycache__/migrations/__pycache__
