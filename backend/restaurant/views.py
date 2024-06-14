@@ -14,7 +14,7 @@ from .serializers import (
 )
 from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User #InviteToken
 from rest_framework_simplejwt.tokens import RefreshToken
-from .permissions import IsStaff
+from .permissions import IsStaff, IsStaffOrReadOnly
 
 from django.contrib.auth import authenticate, login, logout
 #La creación de usuarios parte del Staff se manejará a través de invitaciones en la casilla de notificaciones del usuario deseado. 
@@ -58,9 +58,12 @@ class LogoutView(APIView): #Pendiente. El usuario puede 'deslogerse' de manera i
         return response
     
 class UserProfileView(generics.RetrieveAPIView):#Retorna datos de user y Token en cookie 
-    queryset = User.objects.all()
+
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user 
     
     def post(self, request, *args, **kwargs):
         # return request
@@ -143,7 +146,11 @@ class StaffOnlyView(generics.ListAPIView):
          
          
          
-         
+class MenuViewSet(viewsets.ModelViewSet):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = [IsStaffOrReadOnly]
+           
          
             
 class TableViewSet(viewsets.ModelViewSet):
@@ -156,11 +163,7 @@ class ReservationStateViewSet(viewsets.ModelViewSet):
     serializer_class = ReservationStateSerializer
     permission_classes = [AllowAny]
     
-class MenuViewSet(viewsets.ModelViewSet):
-    queryset = Menu.objects.all()
-    serializer_class = MenuSerializer
-    permission_classes = [AllowAny]
-    
+
 class ReservationViewSet(viewsets.ModelViewSet):
     
     serializer_class = ReservationSerializer
