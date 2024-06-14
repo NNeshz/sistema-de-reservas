@@ -5,7 +5,7 @@ import { landingPageData } from "@/json/fakeData";
 export default function Home() {
   return (
     <>
-      <MaxWidthWrapper className="my-2 h-[90vh]">
+      <MaxWidthWrapper className="my-2">
         <BentoGrid>
           {landingPageData.map((item) => (
             <BentoCard {...item} key={item.name} />
