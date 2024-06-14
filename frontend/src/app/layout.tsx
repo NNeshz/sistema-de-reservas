@@ -25,7 +25,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body className={cn("antialiased min-h-screen p-2", inter.className)}>
+        <body className={cn("antialiased min-h-screen", inter.className)}>
           <Sidebar />
           {children}
           <Footer />

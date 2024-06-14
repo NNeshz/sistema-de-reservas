@@ -41,7 +41,7 @@ export default function ProfileLogin() {
 
   return (
     <div className="w-full flex items-center justify-center h-screen">
-      <div className="bg-white p-5 shadow-xl rounded-xl">
+      <div className="bg-white w-3/12 p-5 shadow-xl rounded-xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h3 className="text-2xl font-semibold">¡Bienvenido de vuelta!</h3>
@@ -57,9 +57,6 @@ export default function ProfileLogin() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Tu nombre de usuario debe tener entre 3 y 20 caracteres.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -73,9 +70,6 @@ export default function ProfileLogin() {
                   <FormControl>
                     <Input placeholder="Escribe tu una contraseña" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Tu contraseña debe tener al menos 8 caracteres.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
