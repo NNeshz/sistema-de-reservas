@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Documentación Frontend
 
-## Getting Started
+## Instalación
 
-First, run the development server:
+Para instalar las dependencias del proyecto, necesitas tener instalado [Node.js](https://nodejs.org/). Luego, ejecuta el siguiente comando en la terminal:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+```
+Este comando instalará todas las dependencias necesarias para el proyecto.
+
+## Ejecución
+
+Para ejecutar el proyecto, ejecuta el siguiente comando en la terminal:
+
+```bash
+npm run dev // Para ejecutar en modo desarrollo
+npm run build // Para compilar el proyecto
+npm run start // Para ejecutar en modo producción
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Estructura de archivos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La estructura de archivos del proyecto es la siguiente:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Carpeta `app`
 
-## Learn More
+En esta carpeta se encuentran los archivos que tienen que ver con el rutado de la aplicación así como su funcionalidad con diferentes archivos como lo son "actions.ts" y "auth.ts",
 
-To learn more about Next.js, take a look at the following resources:
+### Carpeta `components`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+En esta carpeta se encuentran los componentes de la aplicación, los cuales se dividen en dos carpetas, "pages" y "ui && magicui". Estos vienen por parted de [shadcn](https://ui.shadcn.com/) y [magicui](https://magicui.design/). Todos los componentes estan estilado con [TailwindCSS](https://tailwindcss.com/).
