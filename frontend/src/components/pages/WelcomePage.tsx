@@ -3,27 +3,16 @@ import MaxWidthWrapper from "../MaxWidthWrapper";
 import Image from "next/image";
 import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
-import DotPattern from "../magicui/DotPattern";
 
 const WelcomePage = () => {
   return (
     <div className="h-screen w-full flex justify-center items-center">
-      <MaxWidthWrapper className="w-full h-full flex flex-col md:flex-row items-center">
-        <DotPattern
-          width={20}
-          height={20}
-          cx={1}
-          cy={1}
-          cr={1}
-          className={cn(
-            "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)] "
-          )}
-        />
-        <section className="flex flex-col justify-center md:w-1/2 h-1/2 md:h-full px-4">
+      <MaxWidthWrapper className="w-full h-full flex flex-col md:flex-row items-center px-8">
+        <section className="flex flex-col justify-center md:w-1/2 h-1/2 md:h-full">
           <h3 className="text-4xl font-bold">
             Bienvenido a nuestro Restaurant
           </h3>
-          <p className="mt-4">
+          <p className="mt-4 md:pr-4">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Asperiores
             facilis assumenda in corrupti dolorum sequi voluptatum rerum tempora
             inventore libero unde dignissimos non eligendi enim, aut neque!
