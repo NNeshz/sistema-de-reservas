@@ -17,7 +17,7 @@ const HomePage = () => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
       <div className="relative z-10 w-full">
-        <MaxWidthWrapper className="px-4">
+        <MaxWidthWrapper className="px-8">
           <p className="md:text-xl md:pl-1">Experimenta el verdadero sabor.</p>
           <h2 className="text-4xl md:text-7xl">
             Experimenta los mejores <strong>platillos de la ciudad.</strong>
