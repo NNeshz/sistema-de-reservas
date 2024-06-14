@@ -39,7 +39,7 @@ export default function ProfileLogin() {
 
   return (
     <div className="w-full flex items-center justify-center h-screen">
-      <div className="bg-white p-5 shadow-xl rounded-xl">
+      <div className="bg-white w-3/12 p-5 shadow-xl rounded-xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h3 className="text-2xl font-semibold">Inicia tu registro</h3>

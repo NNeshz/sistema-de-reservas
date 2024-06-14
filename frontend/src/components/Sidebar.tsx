@@ -18,7 +18,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative flex h-[6.5vh] w-full rounded-lg bg-yellow-400 shadow-xl justify-between">
+    <div className="relative flex h-[6.5vh] w-full bg-yellow-400 shadow-xl justify-between">
       <MaxWidthWrapper className="flex items-center justify-between w-full px-4">
         <Link href="/" className="flex items-center space-x-2">
           <Image src={LogoOlla} alt="Logo" width={40} height={40} />
