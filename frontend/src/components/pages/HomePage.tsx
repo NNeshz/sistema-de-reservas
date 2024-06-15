@@ -10,8 +10,8 @@ const HomePage = () => {
     <div className="relative h-[70vh] md:h-[85vh] w-full flex flex-col justify-center items-center text-white">
       <Image
         src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe"
-        layout="fill"
         objectFit="cover"
+        layout="fill"
         quality={80}
         alt="Plato de comida"
       />

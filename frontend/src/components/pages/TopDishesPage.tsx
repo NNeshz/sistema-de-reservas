@@ -11,7 +11,7 @@ const TopDishesPage = () => {
         <p className="text-lg text-center">
           Conoce los platillos más populares de nuestro menú.
         </p>
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
           {topDishesData.map((dish) => (
             <TopDish {...dish} key={dish.name} />
           ))}
