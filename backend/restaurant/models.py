@@ -32,10 +32,11 @@ class Menu(models.Model):
 
 class Reservation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # username = models.CharField(max_length=100, unique=True)
     tables = models.ManyToManyField(Table)
     start_date = models.DateField()
     end_date = models.DateField()
-    state = models.ForeignKey(ReservationState, on_delete=models.CASCADE)
+    state = models.ForeignKey(ReservationState, on_delete=models.CASCADE) #Quizas podría hacerlo un campo de texto
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
