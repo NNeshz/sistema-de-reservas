@@ -32,9 +32,9 @@ class MenuSerializer(ModelSerializer):
     class Meta:
         model = Menu
         fields = ['id', 'name', 'description', 'price', 'available']
-
-class ReservationSerializer(ModelSerializer):
-    user = PrimaryKeyRelatedField(queryset=User.objects.all())
+    
+class ReservationSerializer(ModelSerializer): #Retorna las mesas, los menús y el estado vinculado a la reserva especifica del usuario 
+    user = PrimaryKeyRelatedField(read_only=True)  # Solo lectura
     tables = PrimaryKeyRelatedField(queryset=Table.objects.all(), many=True)
     state = PrimaryKeyRelatedField(queryset=ReservationState.objects.all())
     menus = SerializerMethodField()
@@ -46,7 +46,7 @@ class ReservationSerializer(ModelSerializer):
     def get_menus(self, obj):
         reservation_menus = ReservationMenu.objects.filter(reservation=obj)
         return MenuSerializer(reservation_menus, many=True).data
-
+  
     def create(self, validated_data):
         tables_data = validated_data.pop('tables')
         reservation = Reservation.objects.create(**validated_data)

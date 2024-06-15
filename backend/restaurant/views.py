@@ -21,7 +21,7 @@ from django.contrib.auth import authenticate, login, logout
     #Esta función aún no está hecha
 
 class CreateUserView(generics.CreateAPIView): #Se crea el usuario correctamente -> retorna token en cookie
-    queryset = User.objects.all()
+
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     
@@ -150,35 +150,35 @@ class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     permission_classes = [IsStaffOrReadOnly]
-           
-         
-            
+                    
 class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffOrReadOnly]
 
-class ReservationStateViewSet(viewsets.ModelViewSet):
+class ReservationStateViewSet(viewsets.ModelViewSet): 
     queryset = ReservationState.objects.all()
     serializer_class = ReservationStateSerializer
-    permission_classes = [AllowAny]
-    
-
-class ReservationViewSet(viewsets.ModelViewSet):
-    
-    serializer_class = ReservationSerializer
     permission_classes = [IsAuthenticated]
     
+class ReservationViewSet(viewsets.ModelViewSet): #Devuelve reservaciones relacionadas con el usuario
+    serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         return Reservation.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer): #Le asignamos la reserva recién creada al usuario
+        serializer.save(user=self.request.user)
     
-class ReservationMenuViewSet(viewsets.ModelViewSet):
-    queryset = ReservationMenu.objects.all()
+class ReservationMenuViewSet(viewsets.ModelViewSet): #Hay que arreglar el query set
     serializer_class = ReservationMenuSerializer
-    permission_classes = [AllowAny] # [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     
-    
+
+    def get_queryset(self):
+        return ReservationMenu.objects.filter(id=self.request.user)
     
     
     
