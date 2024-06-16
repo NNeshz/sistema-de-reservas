@@ -19,7 +19,7 @@ from .permissions import IsStaff, IsStaffOrReadOnly
 from django.contrib.auth import authenticate, login, logout
 #La creación de usuarios parte del Staff se manejará a través de invitaciones en la casilla de notificaciones del usuario deseado. 
     #Esta función aún no está hecha
-
+"""
 class CreateUserView(generics.CreateAPIView): #Se crea el usuario correctamente -> retorna token en cookie
 
     serializer_class = UserSerializer
@@ -56,7 +56,7 @@ class LogoutView(APIView): #Pendiente. El usuario puede 'deslogerse' de manera i
         response.delete_cookie('token')  # Elimina la cookie del token
     
         return response
-    
+
 class UserProfileView(generics.RetrieveAPIView):#Retorna datos de user y Token en cookie 
 
     serializer_class = UserSerializer
@@ -133,14 +133,17 @@ class StaffOnlyView(generics.ListAPIView):
     queryset = User.objects.filter(is_staff=True)
     serializer_class = UserSerializer
     permission_classes = [IsStaff]  
-         
-         
-         
-         
-         
-         
-         
-         
+"""       
+   
+#Al utilizar NestedDefaultRouter -> Debo trabajar con self.kwargs 
+class MenuUserViewSet(viewsets.ModelViewSet): #No hay que permitir que el usuario cree o midifique menus
+    serializer_class = ReservationMenuSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self): 
+        return ReservationMenu.objects.filter(reservation=self.kwargs['reservations_pk'])
+       
+#localhost://reservations/2/menus/
          
          
          
@@ -156,7 +159,7 @@ class TableViewSet(viewsets.ModelViewSet):
     serializer_class = TableSerializer
     permission_classes = [IsStaffOrReadOnly]
 
-class ReservationStateViewSet(viewsets.ModelViewSet): 
+class ReservationStateViewSet(viewsets.ModelViewSet): #Los estados deberían ser manejados por el Staff
     queryset = ReservationState.objects.all()
     serializer_class = ReservationStateSerializer
     permission_classes = [IsAuthenticated]
@@ -174,7 +177,6 @@ class ReservationViewSet(viewsets.ModelViewSet): #Devuelve reservaciones relacio
 class ReservationMenuViewSet(viewsets.ModelViewSet): #Hay que arreglar el query set
     serializer_class = ReservationMenuSerializer
     permission_classes = [IsAuthenticated]
-    
     
 
     def get_queryset(self):
