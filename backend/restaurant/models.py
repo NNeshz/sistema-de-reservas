@@ -49,8 +49,8 @@ class Reservation(models.Model):
 
 class ReservationMenu(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    menu = models.ManyToManyField(Menu)
+    amount = models.IntegerField() #Cantidad de platos 
 
     def __str__(self):
         return f"Reservación {self.reservation.id} - Menú: {self.menu.name}"
