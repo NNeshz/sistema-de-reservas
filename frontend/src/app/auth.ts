@@ -5,5 +5,12 @@ export const signIn = async ({
   username: string;
   password: string;
 }) => {
-  console.log(`Signing in as ${username} with password ${password}`);
+  await fetch("http://localhost:8000/user/create/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ username, password }),
+  })
+
+  console.log("User created");
 };

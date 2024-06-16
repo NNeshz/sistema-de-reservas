@@ -8,7 +8,8 @@ export async function authenticate(
   password: string
 ) {
   try {
-    await signIn({ username, password });
+    let response = await signIn({ username, password });
+    return response;
   } catch (error) {
     console.error(`Failed to authenticate: ${error}`);
   }

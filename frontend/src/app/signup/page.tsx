@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { authenticate } from "../actions";
 
 const formSchema = z.object({
   username: z.string().min(3).max(20),
@@ -31,15 +32,15 @@ export default function ProfileLogin() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // ✅ TODO: Send the form data to the server
-
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    let response = await authenticate(null, values.username, values.password);
+    console.log(response);
     console.log(values);
   }
 
   return (
     <div className="w-full flex items-center justify-center h-screen">
-      <div className="bg-white w-3/12 p-5 shadow-xl rounded-xl">
+      <div className="bg-white w-2/3 md:w-3/12 p-5 shadow-xl rounded-xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h3 className="text-2xl font-semibold">Inicia tu registro</h3>
@@ -69,7 +70,11 @@ export default function ProfileLogin() {
                 <FormItem>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <Input placeholder="Escribe tu una contraseña" {...field} />
+                    <Input
+                      placeholder="Escribe tu una contraseña"
+                      {...field}
+                      type="password"
+                    />
                   </FormControl>
                   <FormDescription>
                     Tu contraseña debe tener al menos 8 caracteres.
