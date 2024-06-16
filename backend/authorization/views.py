@@ -94,11 +94,11 @@ def update_user(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser])
-def staff():
+def staff(request):
     users = []
     for u in User.objects.all():
         users.append(UserSerializer(instance = u).data)
 
     #(request.user and request.user.is_staff)
-    return Response ({'users':users},status=status.HTTP_200_OK)
+    return Response ({'users':users}, status=status.HTTP_200_OK)
 

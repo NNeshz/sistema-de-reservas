@@ -54,9 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework_simplejwt', #Ya no lo usaré
     'rest_framework.authtoken',
-    'rest_framework_simplejwt.token_blacklist', #Ya no lo usaré
     'corsheaders',
     'rest_framework',
     'authorization',
