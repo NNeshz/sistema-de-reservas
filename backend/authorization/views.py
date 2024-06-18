@@ -14,8 +14,8 @@ from .admin import SECRET_TOKEN_KEY
 #CRUD user + Login + Logout
 
 def get_user_from_token(request):
-    auth_header = request.headers.get('Authorization', '')
-    if not auth_header:
+    auth_header = request.headers.get('Authorization', None)
+    if auth_header is None:
         raise AuthenticationFailed('Authorization header missing')
     
     token = auth_header.split(' ')[1]
@@ -23,7 +23,7 @@ def get_user_from_token(request):
         raise AuthenticationFailed('Token missing')
         
     try:
-        payload = jwt.decode(token, 'hola', algorithms=['HS256'])
+        payload = jwt.decode(token, SECRET_TOKEN_KEY, algorithms=['HS256'])
         print('Decoded payload:', payload)
         return payload
     except jwt.ExpiredSignatureError:
