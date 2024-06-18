@@ -1,10 +1,15 @@
-#pip install -r requirements.txt
-
+#python -m pip install -r requirements.txt
 asgiref==3.8.1
 Django==5.0.6
 django-cors-headers==4.3.1
 djangorestframework==3.15.1
-djangorestframework-simplejwt==5.3.1
-PyJWT==2.8.0
+# djangorestframework-simplejwt==5.3.1
+drf-nested-routers==0.94.1
+ecdsa==0.19.0
+pyasn1==0.6.0
+# PyJWT==2.8.0
+python-jose==3.3.0
+rsa==4.9
+six==1.16.0
 sqlparse==0.5.0
 tzdata==2024.1

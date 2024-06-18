@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
+# from datetime import timedelta
 # from dotenv import load_dotenv -> Cargaba variables de entorno
-import os
+# import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,21 +29,10 @@ SECRET_KEY = 'django-insecure-o-z3zf7g41tv(%vpoxs!r_30kap@6_2=ao+@hgvk@&ke4u!2p2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
-    ],
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+# }
 
 # Application definition
 
@@ -54,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
     'corsheaders',
     'rest_framework',
     'authorization',
@@ -92,9 +81,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
+CORS_ALLOW_CREDENTIALS = True
+
+# Si estás en desarrollo, asegúrate de que estas opciones estén deshabilitadas
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',
+#     ],
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "rest_framework.permissions.AllowAny",
+#     ],
+    
+#     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+# }
 
 DATABASES = {
     'default': {
@@ -138,15 +146,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+# Configuración adicional para desarrollo local
+# if DEBUG:
+#     INSTALLED_APPS += ['debug_toolbar']
+#     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+#     INTERNAL_IPS = ['127.0.0.1']
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-CORS_ALLOWED_ORIGINS = [ "http://localhost:3000", ]
-CORS_ALLOW_CREDENTIALS = True
 # from .env import EMAIL_HOST_PASSWORD, EMAIL_HOST_USER, DEFAULT_FROM_EMAIL
 
 SITE_URL = 'http://localhost:8000'  # Cambia esto a la URL de tu sitio en producción
