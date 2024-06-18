@@ -16,6 +16,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
         }
+        
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
         

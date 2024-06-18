@@ -1,12 +1,12 @@
-from django.urls import re_path
-from .views import login, logout, profile, register, delete_user, update_user, staff
+from django.urls import path, re_path
+from .views import RegisterView, LoginView, UserView, LogoutView, UserDeleteView, update_user_view
 
 urlpatterns = [
-    re_path('user/login/'   , login),             #Post
-    re_path('user/logout/'  , logout),            #Post
-    re_path('user/create/'  , register),          #Post
-    re_path('user/profile/' , profile),           #Get
-    re_path('user/delete/'  , delete_user),       #Delete
-    re_path('user/update/'  , update_user),       #Put
-    re_path('staff-only/'   , staff),             #Post
+    path('user/login/'   , LoginView.as_view()),             #Post
+    path('user/logout/'  , LogoutView.as_view()),            #Post
+    path('user/create/'  ,  RegisterView.as_view()),          #Post
+    path('user/profile/' , UserView.as_view()),           #Get
+    path('user/delete/'  , UserDeleteView.as_view()),       #Delete
+    re_path('user/update/'  , update_user_view),       #Put
+    # re_path('staff-only/'   , staff),             #Post
 ]
