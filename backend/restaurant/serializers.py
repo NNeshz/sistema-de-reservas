@@ -1,5 +1,5 @@
-from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField, SerializerMethodField
-from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User
+from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField, SerializerMethodField, StringRelatedField
+from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User, Category, SubCategory
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -29,9 +29,11 @@ class ReservationStateSerializer(ModelSerializer):
         fields = ['id', 'state']
 
 class MenuSerializer(ModelSerializer):
+    subcategory = PrimaryKeyRelatedField(queryset=Category.objects.all())
+    subcategory_name = StringRelatedField(source='subcategory.name', read_only=True)
     class Meta:
         model = Menu
-        fields = ['id', 'name', 'description', 'price', 'available']
+        fields = ['id', 'name', 'description', 'price', 'available', 'subcategory', 'subcategory_name']
     
 class ReservationSerializer(ModelSerializer): #Retorna las mesas, los menús y el estado vinculado a la reserva especifica del usuario 
     user = PrimaryKeyRelatedField(read_only=True)  # Solo lectura
@@ -57,3 +59,31 @@ class ReservationMenuSerializer(ModelSerializer):
     class Meta:
         model = ReservationMenu
         fields = ['id', 'reservation', 'menu', 'amount']
+        
+class CategorySerializer(ModelSerializer):
+    '''
+    {
+        {'id':1 , 'name':'Bebidas'}
+        {'id':2 , 'name':'Alimentos'}
+    }
+    '''
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+        
+class SubCategorySerializer(ModelSerializer):
+    '''
+    {
+      { 'id': 1, 'name': 'Coca Cola', 'category': 1, 'category_name': 'Bebidas' },
+      { 'id': 2, 'name': 'Pepsi'    , 'category': 1, 'category_name': 'Bebidas' },
+    }
+    '''
+    category = PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category_name = StringRelatedField(source='category.name', read_only=True)
+
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'name', 'category', 'category_name']
+    
+
+

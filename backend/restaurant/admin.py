@@ -1,8 +1,13 @@
 from django.contrib import admin
-from .models import Table, Menu, Reservation, ReservationMenu, ReservationState
+from .models import Table, Menu, Reservation, ReservationMenu, ReservationState, Category, SubCategory, InviteToken
 
-admin.site.register(Table)
+SECRET_TOKEN_KEY = '23hio20'
+
 admin.site.register(Menu)
+admin.site.register(Table)
+admin.site.register(Category)
+admin.site.register(SubCategory)
+admin.site.register(InviteToken)
 admin.site.register(Reservation)
 admin.site.register(ReservationMenu)
 admin.site.register(ReservationState)

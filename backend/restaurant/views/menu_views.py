@@ -1,8 +1,8 @@
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets
-from .permissions import IsStaffOrReadOnly
-from .serializers import MenuSerializer
-from .models import Menu
+from ..permissions import IsStaffOrReadOnly
+from ..serializers import MenuSerializer
+from ..models import Menu
 """
 #localhost://reservations/2/menus/
 #Al utilizar NestedDefaultRouter -> Debo trabajar con self.kwargs 

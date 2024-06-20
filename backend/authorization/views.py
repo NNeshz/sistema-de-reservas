@@ -1,7 +1,7 @@
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.viewsets import generics
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -14,6 +14,7 @@ from .admin import SECRET_TOKEN_KEY
 #CRUD user + Login + Logout
 
 def get_user_from_token(request):
+    #'Authorization':'Bearer jr23oifjn3pinv4938fuoeifj'
     auth_header = request.headers.get('Authorization', None)
     if auth_header is None:
         raise AuthenticationFailed('Authorization header missing')
@@ -36,7 +37,8 @@ def get_user_from_token(request):
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            return Response({'detail':'Data not valid'},status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
 
         payload = {
@@ -130,9 +132,9 @@ def update_user_view(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            
 
- 
+
+
 @api_view(['POST'])
 def staff(request):
     payload = get_user_from_token(request)
