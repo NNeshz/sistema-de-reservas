@@ -29,7 +29,7 @@ class ReservationStateSerializer(ModelSerializer):
         fields = ['id', 'state']
 
 class MenuSerializer(ModelSerializer):
-    subcategory = PrimaryKeyRelatedField(queryset=Category.objects.all())
+    subcategory = PrimaryKeyRelatedField(queryset=SubCategory.objects.all())
     subcategory_name = StringRelatedField(source='subcategory.name', read_only=True)
     class Meta:
         model = Menu
@@ -75,15 +75,47 @@ class SubCategorySerializer(ModelSerializer):
     '''
     {
       { 'id': 1, 'name': 'Coca Cola', 'category': 1, 'category_name': 'Bebidas' },
-      { 'id': 2, 'name': 'Pepsi'    , 'category': 1, 'category_name': 'Bebidas' },
+      {
+            "id": 1,
+            "name": "Bebidas Frías",
+            "category": 1,
+            "category_name": "Bebidas"
+        }
     }
     '''
     category = PrimaryKeyRelatedField(queryset=Category.objects.all())
     category_name = StringRelatedField(source='category.name', read_only=True)
 
+
     class Meta:
         model = SubCategory
         fields = ['id', 'name', 'category', 'category_name']
+    
+class SubCategoryDetailSerializer(ModelSerializer):
+    '''
+    {
+      { 'id': 1, 'name': 'Coca Cola', 'category': 1, 'category_name': 'Bebidas' },
+      {
+            "id": 1,
+            "name": "Bebidas Frías",
+            "category": 1,
+            "category_name": "Bebidas",
+            "menus": [
+                
+                { "id": 1, "name": "Café Helado", "description": "Café frío con hielo."},
+                { "id": 2, "name": "Limonada"   , "description": "Limonada fresca."    }
+            ]
+        }
+    }
+    '''
+    category = PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category_name = StringRelatedField(source='category.name', read_only=True)
+    menus = MenuSerializer(source='menu_set', many=True, read_only=True) 
+
+
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'name', 'category', 'category_name', 'menus']
     
 
 

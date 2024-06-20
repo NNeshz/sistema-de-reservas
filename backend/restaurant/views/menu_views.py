@@ -16,8 +16,6 @@ class MenuUserViewSet(viewsets.ModelViewSet): #No hay que permitir que el usuari
 """
 
 class MenuViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsStaffOrReadOnly]
     
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer

@@ -9,7 +9,7 @@ from .views.reservation_views import (
 )
 from .views.table_views import TableViewSet
 from .views.menu_views import MenuViewSet
-from .views.categories_views import CategoryView, SubCategoryView
+from .views.categories_views import CategoryView, MenusSubCategoryRetrieveUpdateDestroyAPIView, SubCategoryView
 
 router = DefaultRouter()
 
@@ -19,8 +19,10 @@ router.register(r'menus', MenuViewSet, basename='menus')
 
 #No testeado
 router.register(r'category', CategoryView, basename='category')
-router.register(r'subcategory', SubCategoryView, basename='subcategory')
 router.register(r'reservations', ReservationViewSet, basename='reservations')
+
+# router.register(r'subcategory', MenusSubCategoryRetrieveUpdateDestroyAPIView)
+
 router.register(r'reservation-states', ReservationStateViewSet, basename='reservation-state')
 router.register(r'reservation-menus', ReservationMenuViewSet, basename='reservation-menus')
 
@@ -34,6 +36,8 @@ reservations_router = NestedDefaultRouter(router, r'reservations', lookup='reser
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(reservations_router.urls)),
+    path('subcategory/', SubCategoryView.as_view(), name='hola'),
+    path('subcategory/<pk>/', MenusSubCategoryRetrieveUpdateDestroyAPIView.as_view(), name='subcategory-menus'),
 
 
     re_path('invite/', ProcessInviteView, name='process-invite'),
