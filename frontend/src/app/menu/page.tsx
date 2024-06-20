@@ -4,7 +4,7 @@ import { categoriesData } from "@/json/fakeData";
 import Image from "next/image";
 import Link from "next/link";
 
-const MenuPage = () => {
+const MenuPage = () => {  
   return (
     <div>
       <MaxWidthWrapper className="px-4 mb-14">

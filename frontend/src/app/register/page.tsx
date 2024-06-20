@@ -16,14 +16,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { authenticate } from "../actions";
+import { actionRegister } from "../actions";
 
 const formSchema = z.object({
   username: z.string().min(3).max(20),
   password: z.string().min(8),
 });
 
-export default function ProfileLogin() {
+export default function ProfileLogin() {  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,9 +33,13 @@ export default function ProfileLogin() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    let response = await authenticate(null, values.username, values.password);
-    console.log(response);
-    console.log(values);
+    try {
+      let { username, password } = values;
+      let res = await actionRegister(null, username, password);
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
