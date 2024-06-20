@@ -1,8 +1,8 @@
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets
-from .permissions import IsStaffOrReadOnly
-from .serializers import TableSerializer
-from .models import Table
+from ..permissions import IsStaffOrReadOnly
+from ..serializers import TableSerializer
+from ..models import Table
 
 
 class TableViewSet(viewsets.ModelViewSet):

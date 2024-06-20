@@ -2,18 +2,18 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .serializers import (
+from ..serializers import (
     ReservationMenuSerializer, 
     ReservationSerializer, 
     ReservationStateSerializer
 )
-from .models import Reservation, ReservationMenu, ReservationState, InviteToken
-from .permissions import IsStaff, IsStaffOrReadOnly
+from ..models import Reservation, ReservationMenu, ReservationState, InviteToken
+from ..permissions import IsStaff, IsStaffOrReadOnly
 # from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.authentication import TokenAuthentication
-
 from rest_framework.decorators import api_view
+
 
 
 
@@ -29,8 +29,8 @@ from rest_framework.decorators import api_view
  
  
 from rest_framework.exceptions import AuthenticationFailed
+from ..admin import SECRET_TOKEN_KEY  
 from jose import jwt
-from .admin import SECRET_TOKEN_KEY  
 def get_user_from_token(request):
     auth_header = request.headers.get('Authorization', None)
     if auth_header is None:

@@ -1,14 +1,15 @@
 from rest_framework_nested.routers import NestedDefaultRouter
 from rest_framework.routers import DefaultRouter
 from django.urls import path, re_path, include
-from .views import (
+from .views.reservation_views import (
     ReservationStateViewSet, 
     ReservationMenuViewSet,
     ReservationViewSet,
     ProcessInviteView, 
 )
-from .table_views import TableViewSet
-from .menu_views import MenuViewSet
+from .views.table_views import TableViewSet
+from .views.menu_views import MenuViewSet
+from .views.categories_views import CategoryView, SubCategoryView
 
 router = DefaultRouter()
 
@@ -17,6 +18,8 @@ router.register(r'tables', TableViewSet, basename='tables')
 router.register(r'menus', MenuViewSet, basename='menus')
 
 #No testeado
+router.register(r'category', CategoryView, basename='category')
+router.register(r'subcategory', SubCategoryView, basename='subcategory')
 router.register(r'reservations', ReservationViewSet, basename='reservations')
 router.register(r'reservation-states', ReservationStateViewSet, basename='reservation-state')
 router.register(r'reservation-menus', ReservationMenuViewSet, basename='reservation-menus')
