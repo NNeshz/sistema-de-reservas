@@ -60,17 +60,6 @@ class ReservationMenuSerializer(ModelSerializer):
         model = ReservationMenu
         fields = ['id', 'reservation', 'menu', 'amount']
         
-class CategorySerializer(ModelSerializer):
-    '''
-    {
-        {'id':1 , 'name':'Bebidas'}
-        {'id':2 , 'name':'Alimentos'}
-    }
-    '''
-    class Meta:
-        model = Category
-        fields = ['id', 'name']
-        
 class SubCategorySerializer(ModelSerializer):
     '''
     {
@@ -118,4 +107,15 @@ class SubCategoryDetailSerializer(ModelSerializer):
         fields = ['id', 'name', 'category', 'category_name', 'menus']
     
 
+class CategorySerializer(ModelSerializer):
+    '''
+    {
+        {'id':1 , 'name':'Bebidas'}
+        {'id':2 , 'name':'Alimentos'}
+    }
+    '''
+    subcategory = SubCategorySerializer(source='subcategory_set', many=True, read_only=True) 
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'subcategory']
 
