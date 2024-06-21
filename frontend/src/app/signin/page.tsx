@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { authenticate } from "../actions";
+import { actionLogin } from "../actions";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   username: z.string().min(3).max(20),
@@ -32,16 +33,21 @@ export default function ProfileLogin() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const { username, password } = values;
-    authenticate(null, username, password);
-
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      let { username, password } = values;
+      let res = await actionLogin(null, username, password);
+      if(res) {
+        redirect("/menu");
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
     <div className="w-full flex items-center justify-center h-screen">
-      <div className="bg-white w-3/12 p-5 shadow-xl rounded-xl">
+      <div className="bg-white w-2/3 md:w-3/12 p-5 shadow-xl rounded-xl">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <h3 className="text-2xl font-semibold">¡Bienvenido de vuelta!</h3>
@@ -68,14 +74,14 @@ export default function ProfileLogin() {
                 <FormItem>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <Input placeholder="Escribe tu una contraseña" {...field} />
+                    <Input placeholder="Escribe tu una contraseña" {...field} type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full font-semibold">Enviar</Button>
-            <p className="text-sm">¿Todavía no tienes una cuenta? <Link href={"/signup"} className="text-yellow-400">Registrate</Link> </p>
+            <p className="text-sm">¿Todavía no tienes una cuenta? <Link href={"/register"} className="text-yellow-400">Registrate</Link> </p>
           </form>
         </Form>
       </div>

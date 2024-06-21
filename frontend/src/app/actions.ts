@@ -1,16 +1,27 @@
-"use server";
+import { register, login } from "./auth";
 
-import { signIn } from "@/app/auth";
-
-export async function authenticate(
+export async function actionRegister(
   _currentState: unknown,
   username: string,
   password: string
 ) {
   try {
-    let response = await signIn({ username, password });
+    let response = await register({ username, password });
     return response;
   } catch (error) {
-    console.error(`Failed to authenticate: ${error}`);
+    console.error(`Failed to register: ${error}`);
+  }
+}
+
+export async function actionLogin(
+  _currentState: unknown,
+  username: string,
+  password: string
+) {
+  try {
+    let response = await login({ username, password });
+    return response;
+  } catch (error) {
+    console.error(`Failed to register: ${error}`);
   }
 }

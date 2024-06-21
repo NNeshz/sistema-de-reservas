@@ -4,7 +4,7 @@ import "./globals.css";
 
 // ✅ TODO: Concluir si puede entrar el ThemeProvider
 // import { ThemeProvider } from "@/components/theme-provider";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/DotPattern";
@@ -26,7 +26,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <head />
         <body className={cn("antialiased min-h-screen", inter.className)}>
-          <Sidebar />
+          <Navbar />
           {children}
           <Footer />
           <DotPattern
