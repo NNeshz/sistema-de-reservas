@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # 'rest_framework.authtoken',
     'corsheaders',
     'rest_framework',
+    'coreapi',
     'authorization',
     'restaurant',
 ]
@@ -103,6 +104,10 @@ CSRF_COOKIE_SECURE = False
     
 #     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 # }
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+}
 
 DATABASES = {
     'default': {

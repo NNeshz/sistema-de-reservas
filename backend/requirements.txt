@@ -1,15 +1,29 @@
-#python -m pip install -r requirements.txt
+#py -m pip install -r requirements.txt
+
 asgiref==3.8.1
+certifi==2024.6.2
+charset-normalizer==3.3.2
+coreapi==2.3.3
+coreschema==0.0.4
 Django==5.0.6
 django-cors-headers==4.3.1
+django-debug-toolbar==4.4.2
 djangorestframework==3.15.1
 # djangorestframework-simplejwt==5.3.1
 drf-nested-routers==0.94.1
 ecdsa==0.19.0
+idna==3.7
+itypes==1.2.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
 pyasn1==0.6.0
 # PyJWT==2.8.0
 python-jose==3.3.0
+requests==2.32.3
 rsa==4.9
+setuptools==70.1.0
 six==1.16.0
 sqlparse==0.5.0
 tzdata==2024.1
+uritemplate==4.1.1
+urllib3==2.2.2
