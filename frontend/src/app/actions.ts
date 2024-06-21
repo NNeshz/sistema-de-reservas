@@ -19,10 +19,9 @@ export async function actionLogin(
   password: string
 ) {
   try {
-    await login({ username, password });
-    return true;
+    let response = await login({ username, password });
+    return response;
   } catch (error) {
     console.error(`Failed to register: ${error}`);
-    return false;
   }
 }
