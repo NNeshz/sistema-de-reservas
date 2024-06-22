@@ -4,10 +4,11 @@ import "./globals.css";
 
 // ✅ TODO: Concluir si puede entrar el ThemeProvider
 // import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import DotPattern from "@/components/magicui/DotPattern";
+import isUserAuth from "@/lib/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,12 +22,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const isLogged = isUserAuth();
+
   return (
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
         <body className={cn("antialiased min-h-screen", inter.className)}>
-          <Navbar />
+          <Sidebar isLogged={isLogged} key={String(isLogged)} />
           {children}
           <Footer />
           <DotPattern

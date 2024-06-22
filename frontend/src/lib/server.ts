@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 
 const isUserAuth = () => {
     const cookiesStore = cookies()
-    return cookiesStore.get("jwt")
+    return Boolean(cookiesStore.get("jwt")?.value) 
 }
 
 export default isUserAuth;
