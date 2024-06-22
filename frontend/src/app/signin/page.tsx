@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { actionLogin } from "../actions";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   username: z.string().min(3).max(20),
@@ -25,6 +25,9 @@ const formSchema = z.object({
 });
 
 export default function ProfileLogin() {
+  
+  const router = useRouter();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,8 +40,9 @@ export default function ProfileLogin() {
     try {
       let { username, password } = values;
       let res = await actionLogin(null, username, password);
-      if(res) {
-        redirect("/menu");
+      if(res?.ok) {
+        router.push("/")
+        router.refresh()
       }
     } catch (error) {
       console.log(error)
