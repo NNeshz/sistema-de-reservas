@@ -1,5 +1,5 @@
-from rest_framework import generics, viewsets, mixins
-from ..models import Category, SubCategory, Menu
+from rest_framework import generics, viewsets
+from ..models import Category, SubCategory
 from ..serializers import CategorySerializer, SubCategorySerializer, SubCategoryDetailSerializer
 
 class CategoryView(viewsets.ModelViewSet): #generics porque solo quiero que sea visible, no modificable

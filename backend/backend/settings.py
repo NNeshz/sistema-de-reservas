@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 # from datetime import timedelta
 # from dotenv import load_dotenv -> Cargaba variables de entorno
-# import os
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -164,6 +164,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # from .env import EMAIL_HOST_PASSWORD, EMAIL_HOST_USER, DEFAULT_FROM_EMAIL
 
 SITE_URL = 'http://localhost:8000'  # Cambia esto a la URL de tu sitio en producción
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Configuración de correo
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

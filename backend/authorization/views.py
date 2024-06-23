@@ -2,7 +2,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.viewsets import generics
+from rest_framework.viewsets import generics, ModelViewSet
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from .serializers import UserSerializer, UserUpdateSerializer
@@ -10,6 +10,7 @@ import datetime
 from jose import jwt
 from rest_framework.decorators import api_view
 from .admin import SECRET_TOKEN_KEY  
+
 
 #CRUD user + Login + Logout
 
@@ -149,3 +150,87 @@ def staff(request):
     #(request.user and request.user.is_staff)
     return Response ({'users':users},status=status.HTTP_200_OK)
 
+
+#Con Token puede -> Delete, Get 
+#Sin Token -> Get, Post
+class UsersViewSet(ModelViewSet): #Get y Post implemented
+    
+    serializer_class = UserSerializer
+    update_serializer_class = UserUpdateSerializer
+    # queryset = None
+    
+    def get_user_from_token(request):
+        """Retorna Payload o Lanza un error"""
+        #'Authorization':'Bearer jr23oifjn3pinv4938fuoeifj'
+        auth_header = request.headers.get('Authorization', None)
+        if auth_header is None:
+            raise AuthenticationFailed('Authorization header missing')
+        
+        token = auth_header.split(' ')[1]
+        if not token:
+            raise AuthenticationFailed('Token missing')
+            
+        try:
+            payload = jwt.decode(token, SECRET_TOKEN_KEY, algorithms=['HS256'])
+            print('Decoded payload:', payload)
+            return payload
+        except jwt.ExpiredSignatureError:
+            print('Token has expired')
+            raise AuthenticationFailed('Token has expired') #400
+        except jwt.JWTError as e:
+            print('Invalid token error:', str(e))
+            raise AuthenticationFailed('Invalid token') #407
+    
+    def get_queryset(self):
+        return self.serializer_class().Meta.model.objects.all()
+    
+    def create_user_token(self, serializer) -> Response:
+        """Add token in cookie. 
+        Token data: id, username, expiration and iat."""
+        payload = {
+            'id' : serializer.data['id'],
+            'username': serializer.data['username'],
+            'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.now()
+        }
+        token = jwt.encode(payload, SECRET_TOKEN_KEY, algorithm='HS256').encode('utf-8')
+        
+        response = Response(status=status.HTTP_201_CREATED) 
+        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.data = {'token':'Is in cookies', 'user':serializer.data}
+        
+        return response
+    
+    def create (self, request):
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response({'detail':'Data not valid'},status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer.save()
+        return self.create_user_token(serializer)
+
+    def list(self, request): 
+        auth_header = request.headers.get('Authorization', None)
+        if auth_header:
+            payload = get_user_from_token(request)
+            instance = User.objects.filter(id=payload['id']).first()
+            
+            return Response({'user':self.serializer_class(instance).data},status=status.HTTP_200_OK)
+        
+        #SOLO DEBERÍA DE PODER VER EL LISTADO DE USUSARIOS SI ES STAFF
+        users_serializer = self.serializer_class(self.get_queryset(), many = True)
+        return Response(users_serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        payload = get_user_from_token(request)
+        
+        queryset = User.objects.filter(id=payload['id']).first()
+        if queryset is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        self.perform_destroy(queryset)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        

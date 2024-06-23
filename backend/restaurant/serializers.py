@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField, SerializerMethodField, StringRelatedField
-from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User, Category, SubCategory
+from .models import Menu, Reservation, ReservationMenu, ReservationState, Table, User, Category, SubCategory, Carrito, CarritoItem
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -29,11 +29,23 @@ class ReservationStateSerializer(ModelSerializer):
         fields = ['id', 'state']
 
 class MenuSerializer(ModelSerializer):
+    """
+    {
+        "id": 1,
+        "name": "Salmón",
+        "description": "Salmón",
+        "price": 50.0,
+        "available": true,
+        "subcategory": 5,
+        "subcategory_name": "Pescado",
+        "image": "http://localhost:8000/media/images/download_LxX1dJb.jpg"
+    }
+    """
     subcategory = PrimaryKeyRelatedField(queryset=SubCategory.objects.all())
     subcategory_name = StringRelatedField(source='subcategory.name', read_only=True)
     class Meta:
         model = Menu
-        fields = ['id', 'name', 'description', 'price', 'available', 'subcategory', 'subcategory_name']
+        fields = ['id', 'name', 'description', 'price', 'available', 'subcategory', 'subcategory_name', 'image']
     
 class ReservationSerializer(ModelSerializer): #Retorna las mesas, los menús y el estado vinculado a la reserva especifica del usuario 
     user = PrimaryKeyRelatedField(read_only=True)  # Solo lectura
@@ -106,7 +118,6 @@ class SubCategoryDetailSerializer(ModelSerializer):
         model = SubCategory
         fields = ['id', 'name', 'category', 'category_name', 'menus']
     
-
 class CategorySerializer(ModelSerializer):
     '''
     {
@@ -119,3 +130,35 @@ class CategorySerializer(ModelSerializer):
         model = Category
         fields = ['id', 'name', 'subcategory']
 
+class CarritoSerializer(ModelSerializer):
+    '''
+    {
+        "id": 1,
+        "user": 1
+    }
+    '''
+    
+    class Meta:
+        model = Carrito
+        fields = '__all__'
+        
+class CarritoItemSerializer(ModelSerializer):
+    '''
+    [
+        {
+            "menu": "Ensalada Rusa",
+            "amount": 1
+        },
+        {
+            "menu": "Salmón",
+            "amount": 2
+        }
+    ]
+    '''
+    
+    menu = StringRelatedField(source='menu.name', read_only=True)
+    
+    class Meta:
+        model = CarritoItem
+        exclude = ('carrito', 'id')
+        
