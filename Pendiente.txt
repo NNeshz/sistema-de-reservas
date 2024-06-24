@@ -1,2 +1,0 @@
-Implementar la app authorization
-    (Agregar cookies con token) o hablarlo con Neshz
