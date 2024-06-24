@@ -240,7 +240,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import viewsets
-    
+from restaurant.models import Carrito
 
 @api_view(['POST'])
 def create_user(request): 
@@ -258,6 +258,8 @@ def create_user(request):
     response = Response(status.HTTP_201_CREATED)
     response.set_cookie('token', token.key)
     response.data = {'user': serializer.data}
+    
+    Carrito.objects.create(user = user)
     
     return response
     
