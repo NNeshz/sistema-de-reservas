@@ -5,7 +5,6 @@ from .views.reservation_views import (
     ReservationStateViewSet, 
     ReservationMenuViewSet,
     ReservationViewSet,
-    ProcessInviteView, 
 )
 from .views.table_views import TableViewSet
 from .views.menu_views import MenuViewSet
@@ -48,13 +47,7 @@ urlpatterns = [
     path('subcategory/<pk>/', MenusSubCategoryRetrieveUpdateDestroyAPIView.as_view(), name='subcategory-menus'),
 
     path('api/user/carrito/', UserCarrito.as_view({'get':'get', 'put':'put'})),
-
-    re_path('invite/', ProcessInviteView, name='process-invite'),
-    # path('email-form/', email_form, name='email_form'),
-    # path('send/', send_email, name='send'),
+ 
+    #Visualización de imágenes
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root':settings.MEDIA_ROOT}),
 ] 
-
-
-# from .utils import send_staff_invitation
-# from .views import email_form, send_email #Pruebas de envío de correos 

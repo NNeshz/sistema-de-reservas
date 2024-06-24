@@ -1,16 +1,75 @@
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.viewsets import generics, ModelViewSet
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.viewsets import generics, ModelViewSet
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 from .serializers import UserSerializer, UserUpdateSerializer
-import datetime
-from jose import jwt
-from rest_framework.decorators import api_view
+from .models import InviteToken
 from .admin import SECRET_TOKEN_KEY  
+from jose import jwt
+import datetime
 
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework import viewsets
+from restaurant.models import Carrito
+
+#ProcessInviteView este debería ser el que convierte en staff al usuario que usó el token
+#Debería haber otra vista encargada del envío del token
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAdminUser])
+def send_staff_invitation(request): #Funciona perfecto. El Token está vinculado, al acceder se activa 
+
+    username = request.data.get('username', None)
+
+    user = get_object_or_404(User, username=username) 
+    
+    invite_token, created = InviteToken.objects.get_or_create(user=user)
+        
+    invite_url = f'{request.build_absolute_uri("/invite/")}?token={invite_token.token}'
+        
+    print(invite_url)
+    # send_mail(
+    #     'Staff Invitation',
+    #     f'Click the link to become a staff member: {invite_url}',
+    #     settings.DEFAULT_FROM_EMAIL,
+    #     [user.email],
+    #     fail_silently=False,
+    # )
+    return Response({"message": "Invitation sent."})
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def process_staff_invitation(request):
+    token = request.query_params.get('token', None)
+    
+    if not token:
+        return Response({"error": "No token provided."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        invite_token = InviteToken.objects.get(token=token)
+    except InviteToken.DoesNotExist:
+        return Response({"error": "Invalid Invitation."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not request.user == invite_token.user:
+        return Response({"detail": "User not invited."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    user = invite_token.user
+    user.is_staff = True
+    user.save()
+    
+    invite_token.delete()  # Invalida el token eliminándolo
+
+    return Response({"message": "User is now a staff member."}, status=status.HTTP_200_OK)
 
 #CRUD user + Login + Logout
 
@@ -235,12 +294,7 @@ class UsersViewSet(ModelViewSet): #Get y Post implemented
         instance.delete()
        
     
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework import viewsets
-from restaurant.models import Carrito
+
 
 @api_view(['POST'])
 def create_user(request): 
@@ -313,16 +367,10 @@ class UserProfileView(viewsets.GenericViewSet): #Visualiza sus datos y Puede mod
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser])
 def staff(request):
-    payload = get_user_from_token(request)
-    staff = User.objects.filter(id=payload['id']).first()
-    if not staff.is_staff:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-    
     users = []
     for user in User.objects.all():
         users.append(UserSerializer(instance = user).data)
 
-    #(request.user and request.user.is_staff)
     return Response ({'users':users},status=status.HTTP_200_OK)
 
 

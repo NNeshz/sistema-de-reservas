@@ -1,6 +1,16 @@
-from django.urls import path, re_path, include
-from .views import RegisterView, LoginView, UserView, LogoutView, UserDeleteView, update_user_view, UsersViewSet
 from rest_framework.routers import DefaultRouter
+from django.urls import path, re_path, include
+from .views import (
+    RegisterView, 
+    LoginView, 
+    LogoutView, 
+    UserView, 
+    UsersViewSet, 
+    UserDeleteView, 
+    update_user_view, 
+    send_staff_invitation,
+    process_staff_invitation,
+)
 
 router = DefaultRouter()
 router.register(r'users', UsersViewSet, basename='users')
@@ -23,4 +33,8 @@ urlpatterns = (
     re_path('api/user/login/', login), 
     re_path('api/user/create/', create_user),
     re_path('api/staff/', staff),
+    
+    path('send-invitation/', send_staff_invitation, name='send_staff_invitation'),
+    path('invite/', process_staff_invitation, name='process_staff_invitation'),
+
 )
