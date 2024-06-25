@@ -1,32 +1,37 @@
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.viewsets import generics, ModelViewSet
-from rest_framework.views import APIView
-from rest_framework import status
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from .serializers import UserSerializer, UserUpdateSerializer
-from .models import InviteToken
-from .admin import SECRET_TOKEN_KEY  
-from jose import jwt
-import datetime
-
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework import viewsets
+from rest_framework.decorators import authentication_classes, permission_classes, api_view
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.response import Response
+from rest_framework import status
+
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+
 from restaurant.models import Carrito
 
-#ProcessInviteView este debería ser el que convierte en staff al usuario que usó el token
-#Debería haber otra vista encargada del envío del token
+from .serializers import UserSerializer, UserUpdateSerializer
+from .models import InviteToken 
+
+#Checar si es necesario. (Aún no está implementado)
+class UsersViewSet(ModelViewSet): #Get y Post implemented
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    serializer_class = UserSerializer
+    update_serializer_class = UserUpdateSerializer
+
+#CRUD user + Login + Logout + Staff Invitation
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser])
-def send_staff_invitation(request): #Funciona perfecto. El Token está vinculado, al acceder se activa 
+def send_staff_invitation(request): #El token está vinculado por lo que solo funcionará cuando el usuario deseado lo active
 
     username = request.data.get('username', None)
 
@@ -71,231 +76,12 @@ def process_staff_invitation(request):
 
     return Response({"message": "User is now a staff member."}, status=status.HTTP_200_OK)
 
-#CRUD user + Login + Logout
-
-def get_user_from_token(request):
-    #'Authorization':'Bearer jr23oifjn3pinv4938fuoeifj'
-    auth_header = request.headers.get('Authorization', None)
-    if auth_header is None:
-        raise AuthenticationFailed('Authorization header missing')
-    
-    token = auth_header.split(' ')[1]
-    if not token:
-        raise AuthenticationFailed('Token missing')
-        
-    try:
-        payload = jwt.decode(token, SECRET_TOKEN_KEY, algorithms=['HS256'])
-        print('Decoded payload:', payload)
-        return payload
-    except jwt.ExpiredSignatureError:
-        print('Token has expired')
-        raise AuthenticationFailed('Token has expired')
-    except jwt.JWTError as e:
-        print('Invalid token error:', str(e))
-        raise AuthenticationFailed('Invalid token')
-
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response({'detail':'Data not valid'},status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-
-        payload = {
-            'id' : serializer.data['id'],
-            'username': serializer.data['username'],
-            'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.now()
-        }
-
-        token = jwt.encode(payload, SECRET_TOKEN_KEY, algorithm='HS256').encode('utf-8')
-        
-        response = Response(status=status.HTTP_201_CREATED) 
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {'token':'Is in cookies', 'user':serializer.data}
-
-        return response
-
-class LoginView(APIView):
-    def post(self, request):
-        user = get_object_or_404(User, username=request.data['username'])
-        
-        if not user.check_password(request.data['password']):
-            return Response({'errors': 'Invalid password'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        serializer = UserSerializer(instance=user)
-        date = datetime.datetime.now()
-        payload = {
-            'id': serializer.data['id'],
-            'username': serializer.data['username'],
-            'is_admin': '',#serializer.data[]
-            'exp': date + datetime.timedelta(seconds=6000000),
-            'iat': date,
-        }
-        print('Generated payload:', payload)
-        token = jwt.encode(payload, SECRET_TOKEN_KEY, algorithm='HS256')
-        print('Generated token:', token)
-        
-        response = Response(status=status.HTTP_200_OK)
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {'token': 'Is in cookies', 'user': serializer.data}
-        
-        return response
-
-class LogoutView(APIView): #Hay que checar. Debería de quitarle el acceso a ese token. El usuario puede serguir obteniendo información
-    
-    def post(self, request):
-
-        token = request.headers.get('Authorization', None)
-        if not token:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        response = Response(status=status.HTTP_200_OK)
-        response.delete_cookie('jwt')
-        response.data = {
-            'message': 'success'
-        }
-        return response
-
-class UserView(APIView):
-    def post(self, request):
-        payload = get_user_from_token(request)
-        
-        user = User.objects.filter(id=payload['id']).first()
-        if not user:
-            raise AuthenticationFailed('User not found')
-        
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class UserDeleteView(generics.DestroyAPIView):# Funcionando Correctamente
-        
-    def destroy(self, request, *args, **kwargs):
-        payload = get_user_from_token(request)
-        queryset = User.objects.filter(id=payload['id']).first()
-        if queryset is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        
-        self.perform_destroy(queryset)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def perform_destroy(self, instance):
-        instance.delete()
-        
-@api_view(['PUT', 'PATCH'])
-def update_user_view(request):
-    payload = get_user_from_token(request)
-    user = User.objects.filter(id=payload['id']).first()
-    serializer = UserUpdateSerializer(user, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-# @api_view(['POST'])
-# def staff(request):
-#     payload = get_user_from_token(request)
-#     staff = User.objects.filter(id=payload['id']).first()
-#     if not staff.is_staff:
-#         return Response(status=status.HTTP_401_UNAUTHORIZED)
-    
-#     users = []
-#     for user in User.objects.all():
-#         users.append(UserSerializer(instance = user).data)
-
-#     #(request.user and request.user.is_staff)
-#     return Response ({'users':users},status=status.HTTP_200_OK)
-
-
-#Con Token puede -> Delete, Get 
-#Sin Token -> Get, Post
-class UsersViewSet(ModelViewSet): #Get y Post implemented
-    
-    serializer_class = UserSerializer
-    update_serializer_class = UserUpdateSerializer
-    # queryset = None
-    
-    def get_user_from_token(request):
-        """Retorna Payload o Lanza un error"""
-        #'Authorization':'Bearer jr23oifjn3pinv4938fuoeifj'
-        auth_header = request.headers.get('Authorization', None)
-        if auth_header is None:
-            raise AuthenticationFailed('Authorization header missing')
-        
-        token = auth_header.split(' ')[1]
-        if not token:
-            raise AuthenticationFailed('Token missing')
-            
-        try:
-            payload = jwt.decode(token, SECRET_TOKEN_KEY, algorithms=['HS256'])
-            print('Decoded payload:', payload)
-            return payload
-        except jwt.ExpiredSignatureError:
-            print('Token has expired')
-            raise AuthenticationFailed('Token has expired') #400
-        except jwt.JWTError as e:
-            print('Invalid token error:', str(e))
-            raise AuthenticationFailed('Invalid token') #407
-    
-    def get_queryset(self):
-        return self.serializer_class().Meta.model.objects.all()
-    
-    def create_user_token(self, serializer) -> Response:
-        """Add token in cookie. 
-        Token data: id, username, expiration and iat."""
-        payload = {
-            'id' : serializer.data['id'],
-            'username': serializer.data['username'],
-            'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.now()
-        }
-        token = jwt.encode(payload, SECRET_TOKEN_KEY, algorithm='HS256').encode('utf-8')
-        
-        response = Response(status=status.HTTP_201_CREATED) 
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {'token':'Is in cookies', 'user':serializer.data}
-        
-        return response
-    
-    def create (self, request):
-        serializer = self.serializer_class(data=request.data)
-        if not serializer.is_valid():
-            return Response({'detail':'Data not valid'},status=status.HTTP_400_BAD_REQUEST)
-        
-        serializer.save()
-        return self.create_user_token(serializer)
-
-    def list(self, request): 
-        auth_header = request.headers.get('Authorization', None)
-        if auth_header:
-            payload = get_user_from_token(request)
-            instance = User.objects.filter(id=payload['id']).first()
-            
-            return Response({'user':self.serializer_class(instance).data},status=status.HTTP_200_OK)
-        
-        #SOLO DEBERÍA DE PODER VER EL LISTADO DE USUSARIOS SI ES STAFF
-        users_serializer = self.serializer_class(self.get_queryset(), many = True)
-        return Response(users_serializer.data, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        payload = get_user_from_token(request)
-        
-        queryset = User.objects.filter(id=payload['id']).first()
-        if queryset is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        
-        self.perform_destroy(queryset)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def perform_destroy(self, instance):
-        instance.delete()
-       
-    
-
-
+@extend_schema(
+    request=UserSerializer,
+    description="Create a new user and return an authentication token.",
+    summary="Create User"
+)
+@api_view(['POST'])
 @api_view(['POST'])
 def create_user(request): 
     serializer = UserSerializer(data=request.data)
@@ -317,7 +103,6 @@ def create_user(request):
     
     return response
     
-
 @api_view(['POST'])
 def login(request):
     print(f'{request.data['username'] = }')
@@ -344,14 +129,15 @@ def logout (request):
     request.user.auth_token.delete() 
     return Response({'detail':'logout'}, status=status.HTTP_200_OK)
 
-class UserProfileView(viewsets.GenericViewSet): #Visualiza sus datos y Puede modificarlos.
+class UserProfileView(GenericViewSet): #Visualiza sus datos y Puede modificarlos.
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = UserUpdateSerializer
     def get(self, request):        
         return Response({'user': request.user.username}, status.HTTP_200_OK)
     
     def put(self, request):    
-        serializer = UserUpdateSerializer(request.user, data=request.data, partial=True)
+        serializer = self.serializer_class(request.user, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -363,7 +149,7 @@ class UserProfileView(viewsets.GenericViewSet): #Visualiza sus datos y Puede mod
         user.delete()
         return Response({'detail': 'User deleted'}, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['POST'])
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAdminUser])
 def staff(request):
