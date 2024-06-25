@@ -5,12 +5,12 @@ import { Separator } from "../ui/separator";
 const popularDishes = [
   {
     name: "Pizza",
-    description: "Delicious pizza with pepperoni and cheese.",
+    description: "Delicious pizza with pepperoni and cheese. Add your ingredients as you like.",
     image: "https://rb.gy/uxr949",
   },
   {
     name: "BBQ Burger",
-    description: "Juicy burger with BBQ sauce and bacon.",
+    description: "Juicy burger with BBQ sauce and bacon. With fries and a drink.",
     image: "https://rb.gy/60slyh",
   },
   {
@@ -20,7 +20,7 @@ const popularDishes = [
   },
   {
     name: "Sushi",
-    description: "Sushi rolls with salmon and avocado.",
+    description: "Sushi rolls with salmon and avocado. The sea in your plate.",
     image: "https://rb.gy/2w809o",
   },
 ];
