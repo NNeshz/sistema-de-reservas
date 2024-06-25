@@ -32,13 +32,13 @@ const Navbar = () => {
               <ShoppingCart className="w-5 h-5 text-zinc-400 hover:text-primary" />
             </Link>
             <Link
-              href={"/register"}
+              href={"/auth"}
               className={buttonVariants({
                 variant: "default",
                 size: "sm",
               })}
             >
-              Login
+              Register
             </Link>
           </div>
         </nav>
@@ -86,7 +86,7 @@ const Navbar = () => {
                   <ShoppingCart className="w-6 h-6" /> Cart
                 </Link>
                 <Link
-                  href={"/register"}
+                  href={"/auth"}
                   className={buttonVariants({
                     variant: "default",
                     className: "font-medium",
