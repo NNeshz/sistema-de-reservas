@@ -76,13 +76,12 @@ def process_staff_invitation(request):
 
     return Response({"message": "User is now a staff member."}, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
 @extend_schema(
     request=UserSerializer,
     description="Create a new user and return an authentication token.",
     summary="Create User"
 )
-@api_view(['POST'])
-@api_view(['POST'])
 def create_user(request): 
     serializer = UserSerializer(data=request.data)
     if not serializer.is_valid(): #Si la información recibida es válida (Contiene todos los campos requeridos, etc)
