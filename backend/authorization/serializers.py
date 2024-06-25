@@ -1,20 +1,26 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-
-#Los serializers sirven para interpretar los Json y trabajarlos como Diccionarios
+from django.core.validators import MinLengthValidator 
+from django.utils.translation import gettext_lazy as _
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password']
         extra_kwargs = {
-            'password': {'write_only': True},
+            'password': {'write_only': True, 'validators': [MinLengthValidator(8, message=_("La contraseña debe tener al menos 8 caracteres"))]},
             'is_staff': {'required': False}
         }
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user   
-      
+        password = validated_data.pop('password', None)
+        user = super().create(validated_data)  # Call the base class's create method to get the user instance
+
+        if password:
+            user.set_password(password)  # Set the user's password
+            user.save()
+
+        return user
+    
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = User

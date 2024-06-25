@@ -1,3 +1,6 @@
 from django.contrib import admin
+from.models import InviteToken
+
 SECRET_TOKEN_KEY = '23hio20'
-# Register your models here.
+
+admin.site.register(InviteToken)

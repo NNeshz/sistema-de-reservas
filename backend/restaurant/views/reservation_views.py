@@ -7,7 +7,7 @@ from ..serializers import (
     ReservationSerializer, 
     ReservationStateSerializer
 )
-from ..models import Reservation, ReservationMenu, ReservationState, InviteToken
+from ..models import Reservation, ReservationMenu, ReservationState
 from ..permissions import IsStaff, IsStaffOrReadOnly
 # from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -78,14 +78,6 @@ class ReservationMenuViewSet(viewsets.ModelViewSet): #Hay que arreglar el query 
     
     def get_queryset(self):
         return ReservationMenu.objects.filter(id=self.request.user)
-    
-@api_view(['POST'])
-def ProcessInviteView(request):
-    print('\n\n\n\n')
-    try:
-        payload = get_user_from_token(request)
-        user = User.objects.filter(id=payload['id']).first()   
-        invite_token = InviteToken.objects.create(payload['id'])
         
     #     print(invite_token)
     #     print(request, token)
@@ -99,9 +91,6 @@ def ProcessInviteView(request):
     #     user.save()
     #     invite_token.delete()  # Eliminar el token después de su uso
     #     return Response({'status': 'User promoted to staff'}, status=status.HTTP_200_OK)
-    
-    except InviteToken.DoesNotExist:
-        return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
     
 
     
