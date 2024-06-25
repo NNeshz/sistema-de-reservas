@@ -1,11 +1,9 @@
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from ..serializers import CarritoSerializer, CarritoItemSerializer
 from ..models import Carrito, CarritoItem
-from authorization.views import get_user_from_token
 # from authorization.serializers import UserSerializer
 
 #Está incompleto -> Hace falta validaciones 
-
 
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
@@ -16,9 +14,12 @@ from rest_framework import status
 
 from django.shortcuts import get_object_or_404
 
+from ..serializers import CarritoSerializer, CarritoItemSerializer
+
 class UserCarrito (GenericViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = CarritoSerializer 
     '''
     {
         "Carrito": {
@@ -49,8 +50,6 @@ class UserCarrito (GenericViewSet):
     def put(self, request):  
         return Response(status=status.HTTP_200_OK)
     
-
-
 class CarritoViewSet(ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
