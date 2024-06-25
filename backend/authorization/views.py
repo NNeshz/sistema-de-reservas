@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
 from rest_framework import status
 
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -76,13 +76,12 @@ def process_staff_invitation(request):
 
     return Response({"message": "User is now a staff member."}, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
 @extend_schema(
     request=UserSerializer,
     description="Create a new user and return an authentication token.",
     summary="Create User"
 )
-@api_view(['POST'])
-@api_view(['POST'])
 def create_user(request): 
     serializer = UserSerializer(data=request.data)
     if not serializer.is_valid(): #Si la información recibida es válida (Contiene todos los campos requeridos, etc)
@@ -105,9 +104,8 @@ def create_user(request):
     
 @api_view(['POST'])
 def login(request):
-    print(f'{request.data['username'] = }')
-    user = get_object_or_404(User, username=request.data['username'])
-    
+    user = get_object_or_404(User, username=request.data.get('username'))
+
     if not user.check_password(request.data['password']): #Sirve para comparar un string con un string ya encriptado
         return Response({'errors':'Invalid password'}, status=status.HTTP_400_BAD_REQUEST)
     

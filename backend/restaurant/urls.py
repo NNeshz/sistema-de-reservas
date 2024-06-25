@@ -17,25 +17,16 @@ router.register(r'menus', MenuViewSet, basename='menus')
 
 #No testeado
 router.register(r'category', CategoryView, basename='category')
-router.register(r'carrito', CarritoViewSet) #RECIÉN AÑADIDO
 
 # router.register(r'subcategory', MenusSubCategoryRetrieveUpdateDestroyAPIView)
 
-#En progreso
-# reservations_router.register(r'menus', MenuView, basename='reservations-menus')
-# reservations_router.register(r'tables', MenuViewSet, basename='reservations-tables')
-
-carrito_items_router = NestedDefaultRouter(router, r'carrito', lookup='carrito_items') #RECIÉN AÑADIDO
-carrito_items_router.register(r'elementos',CarritoItemViewSet, basename='carrito-items')
-
 urlpatterns = [
     path('', include(router.urls)),
-    # path('', include(reservations_router.urls)),   
-    path('', include(carrito_items_router.urls)),   
-    path('subcategory/', SubCategoryView.as_view(), name='hola'),
+     
+    path('subcategory/', SubCategoryView.as_view(), name='subcategory'),
     path('subcategory/<pk>/', MenusSubCategoryRetrieveUpdateDestroyAPIView.as_view(), name='subcategory-menus'),
 
-    path('api/user/carrito/', UserCarrito.as_view({'get':'get', 'put':'put'})),
+    path('user/carrito/', UserCarrito.as_view({'get':'get'})),
  
     #Visualización de imágenes
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root':settings.MEDIA_ROOT}),
