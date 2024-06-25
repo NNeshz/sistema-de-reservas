@@ -2,18 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Table(models.Model):
-    chairs = models.IntegerField()
+    chairs = models.PositiveSmallIntegerField(default=1)
     price = models.FloatField()
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Mesa {self.id} - Capacidad: {self.chairs}"
-
-class ReservationState(models.Model):
-    state = models.CharField(max_length=20, unique=True)
-
-    def __str__(self):
-        return self.state
 
 class Category(models.Model):#Bebidas, Alimentos, Etc.
     name = models.CharField(max_length=50, unique=True)
@@ -39,31 +33,6 @@ class Menu(models.Model):
     def __str__(self):
         return self.name
 
-class Reservation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # username = models.CharField(max_length=100, unique=True)
-    tables = models.ManyToManyField(Table)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    state = models.ForeignKey(ReservationState, on_delete=models.CASCADE) #Quizas podría hacerlo un campo de texto
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def clean(self):
-        if self.end_date < self.start_date:
-            raise ValueError ('The end date must be after the start date.')
-
-
-    def __str__(self):
-        return f"Reservación {self.id} - Usuario: {self.user.username}"
-
-class ReservationMenu(models.Model):
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
-    menu = models.ManyToManyField(Menu)
-    amount = models.IntegerField() #Cantidad de platos 
-
-    def __str__(self):
-        return f"Reservación {self.reservation.id} - Menú: {self.menu.name}"
-
 class Carrito(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
@@ -73,7 +42,7 @@ class Carrito(models.Model):
 class CarritoItem(models.Model): 
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField(default=1)
+    amount = models.PositiveSmallIntegerField(default=1)
     
     def __str__(self):
         return f"{self.carrito.user}: {self.amount} {self.menu.name}"
