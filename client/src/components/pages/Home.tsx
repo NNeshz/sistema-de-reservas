@@ -1,6 +1,5 @@
 import DishCard from "../shared/DishCard";
 import MaxWidthWrapper from "../shared/MaxWidthWrapper";
-import { Separator } from "../ui/separator";
 
 const popularDishes = [
   {
