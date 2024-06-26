@@ -33,7 +33,6 @@ const Home = () => {
         <p className="text-sm text-zinc-600 mt-2">
           Taste the real flavor in your city, just by some clicks.
         </p>
-        <Separator className="my-4" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           {popularDishes.map((dish) => (
             <DishCard
