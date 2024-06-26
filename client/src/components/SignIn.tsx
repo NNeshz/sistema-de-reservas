@@ -15,6 +15,8 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Card, CardDescription, CardTitle } from "./ui/card";
+import { fetchLogin } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 const signInFormSchema = z.object({
   username: z.string().min(3).max(20),
@@ -22,6 +24,9 @@ const signInFormSchema = z.object({
 });
 
 const SignIn = () => {
+
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
@@ -30,10 +35,16 @@ const SignIn = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof signInFormSchema>) {
-    // TODO: Implement sign in logic
-
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof signInFormSchema>) {
+    try {
+      let response = await fetchLogin(data.username, data.password);
+      if(response?.ok) {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
   }
 
   return (
