@@ -1,10 +1,13 @@
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Menu, ShoppingCart } from "lucide-react";
+import { Menu, ShoppingCart, UserIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button, buttonVariants } from "../ui/button";
+import { isUserAuthenticated } from "@/lib/isLogged";
 
 const Navbar = () => {
+  const isUser = isUserAuthenticated();
+
   return (
     <header className="md:border-b">
       {/* NAVBAR DESKTOP */}
@@ -31,21 +34,33 @@ const Navbar = () => {
             <Link href={"/cart"}>
               <ShoppingCart className="w-5 h-5 text-zinc-400 hover:text-primary" />
             </Link>
-            <Link
-              href={"/auth"}
-              className={buttonVariants({
-                variant: "default",
-                size: "sm",
-              })}
-            >
-              Register
-            </Link>
+            {isUser ? (
+              <Link
+                href={"/profile"}
+                className={buttonVariants({
+                  variant: "default",
+                  className: "font-medium",
+                })}
+              >
+                <UserIcon className="w-5 h-5" />
+              </Link>
+            ) : (
+              <Link
+                href={"/auth"}
+                className={buttonVariants({
+                  variant: "default",
+                  className: "font-medium",
+                })}
+              >
+                Register
+              </Link>
+            )}
           </div>
         </nav>
       </MaxWidthWrapper>
 
       {/* SIDEBAR MOBILE */}
-      <MaxWidthWrapper className="block py-1 md:hidden">
+      <MaxWidthWrapper className="block py-1 mt-1 md:hidden">
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -82,18 +97,33 @@ const Navbar = () => {
                 </Link>
               </div>
               <div className="flex flex-col gap-y-4">
-                <Link href={"/cart"} className="flex gap-x-3 font-semibold text-zinc-400 hover:text-primary">
+                <Link
+                  href={"/cart"}
+                  className="flex gap-x-3 font-semibold text-zinc-400 hover:text-primary"
+                >
                   <ShoppingCart className="w-6 h-6" /> Cart
                 </Link>
-                <Link
-                  href={"/auth"}
-                  className={buttonVariants({
-                    variant: "default",
-                    className: "font-medium",
-                  })}
-                >
-                  Register
-                </Link>
+                {isUser ? (
+                  <Link
+                    href={"/profile"}
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "font-medium",
+                    })}
+                  >
+                    <UserIcon className="w-6 h-6" />
+                  </Link>
+                ) : (
+                  <Link
+                    href={"/auth"}
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "font-medium",
+                    })}
+                  >
+                Register
+                  </Link>
+                )}
               </div>
             </nav>
           </SheetContent>
