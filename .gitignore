@@ -1,16 +1,16 @@
-# Entorno de desarrollo
-.env
-.env.local
-.env.*.local
+env
+.vscode
 
-frontend/
+client
+frontend
+
 backend/backend/__pycache__
-backend/restaurant/__pycache__
-backend/restaurant/migrations
-backend/backend/env.py
-backend/restaurant/__pycache__/migrations/__pycache__
-backend/restaurant - copia
-backend/backend - copia
+
 backend/authorization/__pycache__
 backend/authorization/migrations
-sistema-de-reservas.code-workspace
+
+backend/restaurant/migrations
+backend/restaurant/__pycache__
+backend/restaurant/views/__pycache__
+
+Pendiente.md

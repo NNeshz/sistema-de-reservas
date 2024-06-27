@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-o-z3zf7g41tv(%vpoxs!r_30kap@6_2=ao+@hgvk@&ke4u!2p2'
-
+MERCADOPAGO_ACCESS_TOKEN = 'z3zf7g41tv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -53,7 +53,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
