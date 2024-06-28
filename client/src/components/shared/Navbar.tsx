@@ -4,8 +4,10 @@ import { Menu, ShoppingCart, UserIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button, buttonVariants } from "../ui/button";
 import { isUserAuthenticated } from "@/lib/isLogged";
+import useUserStore from "@/context/useUserStore";
 
 const Navbar = () => {
+  
   const isUser = isUserAuthenticated();
 
   return (

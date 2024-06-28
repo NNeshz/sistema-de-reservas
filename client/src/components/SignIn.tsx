@@ -15,8 +15,8 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Card, CardDescription, CardTitle } from "./ui/card";
-import { fetchLogin } from "@/utils/auth";
 import { useRouter } from "next/navigation";
+import useUserStore from "@/context/useUserStore";
 
 const signInFormSchema = z.object({
   username: z.string().min(3).max(20),
@@ -25,6 +25,8 @@ const signInFormSchema = z.object({
 
 const SignIn = () => {
 
+  const fetchLogin = useUserStore((state) => state.login);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInFormSchema>>({
@@ -37,8 +39,8 @@ const SignIn = () => {
 
   async function onSubmit(data: z.infer<typeof signInFormSchema>) {
     try {
-      let response = await fetchLogin(data.username, data.password);
-      if(response?.ok) {
+      await fetchLogin(data);
+      if(isLoggedIn) {
         router.push("/");
         router.refresh();
       }
