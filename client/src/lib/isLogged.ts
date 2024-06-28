@@ -1,6 +1,14 @@
-import { cookies } from "next/headers";
+import Cookies from 'js-cookie';
 
-export const isUserAuthenticated = () => {
-    const cookiesStore = cookies();
-    return Boolean(cookiesStore.get("jwt")?.value);
+export const getServerSideProps = async (context) => {
+    const cookie = new Cookies(context.req, context.res)
+    const token = cookie.get('token')
+
+    const isAuthenticated = token ? true : false
+
+    return {
+        props: {
+            isAuthenticated
+        }
+    }
 }
