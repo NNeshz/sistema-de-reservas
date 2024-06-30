@@ -132,7 +132,9 @@ class UserProfileView(GenericViewSet): #Visualiza sus datos y Puede modificarlos
     permission_classes = [IsAuthenticated]
     serializer_class = UserUpdateSerializer
     def get(self, request):        
-        return Response({'user': request.user.username}, status.HTTP_200_OK)
+        print(f'{request.headers['Cookie'] = }')
+        u = request.user
+        return Response({'user': (u.username, u.email, u.is_staff)}, status.HTTP_200_OK)
     
     def put(self, request):    
         serializer = self.serializer_class(request.user, data=request.data, partial=True)
