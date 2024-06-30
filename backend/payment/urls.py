@@ -1,5 +1,11 @@
 from django.urls import path
-from .tests import ProcessPaymentView
-urlpatterns = (
-    path('process_payment/', ProcessPaymentView.as_view(), name='process_payment'),
-    )
+from . import views
+
+
+urlpatterns = [
+    path('create/', views.create_preference, name='create_preference'),
+    path('success/', views.payment_success, name='payment_success'),
+    path('failure/', views.payment_failure, name='payment_failure'),
+    path('pending/', views.payment_pending, name='payment_pending'),
+]
+

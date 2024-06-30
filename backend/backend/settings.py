@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-o-z3zf7g41tv(%vpoxs!r_30kap@6_2=ao+@hgvk@&ke4u!2p2'
-MERCADOPAGO_ACCESS_TOKEN = 'z3zf7g41tv'
+MERCADOPAGO_ACCESS_TOKEN = 'TEST-8024352005541008-062703-67f965954caed26ad3fed09f17c720fa-536480649'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -29,12 +29,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework.authtoken', #Recién descomentado
+    # 'rest_framework.authtoken', #Recién descomentado
     'drf_spectacular',
     'corsheaders',
     'rest_framework',
-    'authorization',
+    'authentication',
     'restaurant',
+    'payment',
+    'payments',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +56,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'payments/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,7 +70,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
-
+CSP_DEFAULT_SRC = ("'self'", "https://sdk.mercadopago.com", "https://http2.mlstatic.com")
+CSP_SCRIPT_SRC = ("'self'", "https://sdk.mercadopago.com", "https://http2.mlstatic.com", "'unsafe-inline'")
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
@@ -92,10 +96,12 @@ CSRF_COOKIE_SECURE = False
 # }
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [ 'rest_framework.authentication.TokenAuthentication', ],
-    
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Apis documentation',
     'DESCRIPTION': '',
