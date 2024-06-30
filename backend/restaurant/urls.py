@@ -26,7 +26,7 @@ urlpatterns = [
     path('subcategory/', SubCategoryView.as_view(), name='subcategory'),
     path('subcategory/<pk>/', MenusSubCategoryRetrieveUpdateDestroyAPIView.as_view(), name='subcategory-menus'),
 
-    path('user/carrito/', UserCarrito.as_view({'get':'get'})),
+    path('user/carrito/', UserCarrito.as_view({'get':'get', 'put':'put'})),
  
     #Visualización de imágenes
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root':settings.MEDIA_ROOT}),

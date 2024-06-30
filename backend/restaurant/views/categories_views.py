@@ -4,7 +4,7 @@ from ..serializers import CategorySerializer, SubCategorySerializer, SubCategory
 
 from ..permissions import IsStaffOrReadOnly
 
-class CategoryView(generics.ListAPIView): #generics porque solo quiero que sea visible, no modificable
+class CategoryView(viewsets.ModelViewSet): #generics porque solo quiero que sea visible, no modificable
     # permission_classes = [IsStaffOrReadOnly]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()

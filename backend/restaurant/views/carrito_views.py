@@ -20,7 +20,6 @@ class UserCarrito (GenericViewSet):
             "user": 11
         },
         "Items": {   
-            {
                 "menu": "Ensalada Rusa",
                 "amount": 1
             },
