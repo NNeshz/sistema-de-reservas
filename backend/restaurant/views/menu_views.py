@@ -1,4 +1,3 @@
-from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets
 from ..permissions import IsStaffOrReadOnly
 from ..serializers import MenuSerializer
@@ -16,7 +15,7 @@ class MenuUserViewSet(viewsets.ModelViewSet): #No hay que permitir que el usuari
 """
 
 class MenuViewSet(viewsets.ModelViewSet):
-    
+    # permission_classes = [IsStaffOrReadOnly]
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     

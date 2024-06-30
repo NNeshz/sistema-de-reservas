@@ -1,12 +1,9 @@
-from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets
 from ..permissions import IsStaffOrReadOnly
 from ..serializers import TableSerializer
 from ..models import Table
 
-
 class TableViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsStaffOrReadOnly]
     
     queryset = Table.objects.all()
