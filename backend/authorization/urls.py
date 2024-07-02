@@ -8,11 +8,12 @@ router.register(r'users', UsersViewSet, basename='users')
 
 urlpatterns = (    
     path('', include(router.urls)),
-    
-    path('user/profile/', UserProfileView.as_view({'get':'get', 'put':'put', 'delete':'delete'})),
     re_path('user/login/', login), 
     re_path('user/logout/', logout),
+    
     re_path('user/create/', create_user),
+    path('user/profile/', UserProfileView.as_view({'get':'get', 'put':'put', 'delete':'delete'})),
+    
     re_path('staff/', staff),
     
     path('send-invitation/', send_staff_invitation, name='send_staff_invitation'),

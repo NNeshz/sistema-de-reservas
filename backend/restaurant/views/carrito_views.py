@@ -1,14 +1,8 @@
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from ..serializers import CarritoSerializer, CarritoItemSerializer
 from ..models import Carrito, CarritoItem, Menu
-# from authorization.serializers import UserSerializer
 
-#Está incompleto -> Hace falta validaciones 
-
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -17,7 +11,6 @@ from django.shortcuts import get_object_or_404
 from ..serializers import CarritoSerializer, CarritoItemSerializer
 
 class UserCarrito (GenericViewSet):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CarritoSerializer 
     '''
@@ -27,7 +20,6 @@ class UserCarrito (GenericViewSet):
             "user": 11
         },
         "Items": {   
-            {
                 "menu": "Ensalada Rusa",
                 "amount": 1
             },
@@ -42,7 +34,7 @@ class UserCarrito (GenericViewSet):
     def get(self, request): 
         #Buscamos carrito y obtenemos datos
         carrito = get_object_or_404(Carrito, user=request.user)   
-        carrito = CarritoSerializer(carrito).data
+        carrito = self.serializer_class(carrito).data
         #Buscamos items relacionados al carrito
         items   = CarritoItem.objects.filter(carrito=carrito['id'])
         items   = CarritoItemSerializer(items, many=True).data
